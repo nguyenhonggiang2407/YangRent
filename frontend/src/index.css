@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; }
+body { @apply bg-ink-50 text-ink-800 antialiased; font-family: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif; }
+h1, h2, h3, h4, .font-display { font-family: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid rgba(37, 99, 235, .28); outline-offset: 2px; }
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+  .card { @apply rounded-2xl border border-ink-100 bg-white shadow-soft; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500; }
+  .btn-secondary { @apply btn border border-ink-200 bg-white text-ink-700 hover:bg-ink-50 focus:ring-brand-500; }
+  .btn-ghost { @apply btn text-ink-600 hover:bg-ink-100 focus:ring-ink-300; }
+  .input { @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-800 placeholder-ink-400 transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100; }
+  .label { @apply mb-1.5 block text-sm font-medium text-ink-700; }
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+}
+
+.leaflet-container { font-family: inherit; z-index: 0; }
+.tm-marker { background: transparent; border: none; }
+.tm-pin { display:flex; flex-direction:column; align-items:center; filter:drop-shadow(0 4px 6px rgba(2,6,23,.35)); cursor:pointer; transition:transform .15s ease; }
+.tm-pin:hover { transform:scale(1.08); }
+.tm-pin-label { background:#0f172a; color:#fff; font-size:11px; font-weight:700; line-height:1; padding:5px 9px; border-radius:9999px; border:2px solid #fff; white-space:nowrap; }
+.tm-pin.is-active .tm-pin-label { background:#2563eb; }
+.tm-pin-tip { width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #fff; }
+.marker-cluster { background-clip:padding-box; border-radius:20px; }
+.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large { background-color:rgba(37,99,235,.16); }
+.marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div { background-color:#2563eb; color:#fff; font-weight:700; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
