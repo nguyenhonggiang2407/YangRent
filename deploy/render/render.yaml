@@ -1,0 +1,25 @@
+# ============================================================
+# YangRent - Deploy backend lên Render (miễn phí)
+# Cách dùng: push code lên GitHub -> Render Dashboard ->
+#   New -> Blueprint -> chọn repo -> Render tự tạo service từ file này.
+# Sau đó vào service -> Environment để điền các biến môi trường.
+# ============================================================
+services:
+  - type: web
+    name: yangrent-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false        # tự điền trong dashboard (Supabase connection string)
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false        # VD: https://tenmien-cua-ban.helioho.st

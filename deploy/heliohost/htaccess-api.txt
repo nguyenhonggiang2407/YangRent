@@ -1,0 +1,7 @@
+# Place this file as yangrent-api/.htaccess.
+# Pattern follows HelioHost's documented WSGI subdirectory approach.
+Options +ExecCGI
+RewriteEngine On
+RewriteBase /
+RewriteRule ^(dispatch\.wsgi/.*)$ - [L]
+RewriteRule ^(.*)$ yangrent-api/dispatch.wsgi/$1 [QSA,PT,L]

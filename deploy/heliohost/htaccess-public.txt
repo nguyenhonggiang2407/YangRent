@@ -1,0 +1,12 @@
+# YangRent React SPA fallback for HelioHost/Plesk web root.
+RewriteEngine On
+
+# If backend is hosted in a same-domain subdirectory, do not send it to React.
+RewriteCond %{REQUEST_URI} ^/yangrent-api(/|$) [NC]
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.html [L]
