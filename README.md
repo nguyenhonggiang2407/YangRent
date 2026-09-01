@@ -3,7 +3,7 @@
 **YangRent – Thuê nhà, thuê phòng đúng nhu cầu**  
 **Slogan:** *Tìm đúng nơi. Ở đúng gu.*
 
-YangRent là nền tảng full-stack tìm kiếm và quản lý nhà, phòng và căn hộ cho thuê. Dự án được phát triển từ TROFLOW nhưng giữ nguyên kiến trúc nghiệp vụ cốt lõi để tránh phá vỡ dữ liệu, RBAC và các module quản lý hiện có.
+YangRent là nền tảng full-stack tìm kiếm và quản lý nhà, phòng và căn hộ cho thuê. 
 
 ## Mục tiêu sản phẩm
 
