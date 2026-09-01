@@ -1,0 +1,22 @@
+# Secrets - never commit
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Deploy artifacts (chứa .env có secret + binary lớn)
+deploy/upload/
+deploy/tunnel/cloudflared.exe
+
+# Logs / DB
+*.log
+troflow.db
