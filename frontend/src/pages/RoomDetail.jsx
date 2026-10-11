@@ -158,6 +158,7 @@ export default function RoomDetail() {
   const [error, setError] = useState(null)
   const [activeImg, setActiveImg] = useState(0)
   const [lightbox, setLightbox] = useState(false)
+  const images = room?.images?.length ? room.images : []
 
   useEffect(() => {
     if (!lightbox) return undefined
@@ -182,7 +183,6 @@ export default function RoomDetail() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const images = room?.images?.length ? room.images : []
   const amenities = room?.amenities || []
   const videos = room?.videos || []
   const has360 = room?.view_360_enabled && room?.view_3d_url

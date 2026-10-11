@@ -1,14 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Home, LogIn, Sparkles } from 'lucide-react'
+import { Home, LogIn } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Spinner, toast } from '../components/ui'
-
-const DEMO = [
-  { label: 'Admin', email: 'admin@yangrent.vn', pass: 'admin123' },
-  { label: 'Chủ nhà', email: 'hung.nguyen@yangrent.vn', pass: 'yangrent123' },
-  { label: 'Người thuê', email: 'lan.vu@yangrent.vn', pass: 'yangrent123' },
-]
 
 export default function Login() {
   const { login } = useAuth()

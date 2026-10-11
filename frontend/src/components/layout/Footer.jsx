@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Building2, Mail, MapPin, ShieldCheck } from 'lucide-react'
+import { Building2, Info, MapPin, ShieldCheck } from 'lucide-react'
 import { BRAND } from '../../config/brand'
 
 export default function Footer() {
@@ -36,7 +36,7 @@ export default function Footer() {
           <h4 className="text-sm font-bold uppercase tracking-wide text-ink-900">Hỗ trợ</h4>
           <ul className="mt-4 space-y-3 text-sm text-ink-500">
             <li className="flex items-start gap-2.5"><MapPin size={16} className="mt-0.5 shrink-0 text-brand-600" /> Hà Nội, Việt Nam</li>
-            <li className="flex items-center gap-2.5"><Mail size={16} className="shrink-0 text-brand-600" /> support@yangrent.vn</li>
+            <li className="flex items-center gap-2.5"><Info size={16} className="shrink-0 text-brand-600" /> Bản trình diễn học tập</li>
             <li className="flex items-center gap-2.5"><ShieldCheck size={16} className="shrink-0 text-brand-600" /> An toàn &amp; quyền riêng tư</li>
           </ul>
         </div>

@@ -1,59 +1,47 @@
 import { useEffect, useRef, useState } from 'react'
 import api from '../api/client'
+import { readNotificationStream } from '../lib/notificationStream'
 
-/**
- * SSE hook for notification streaming.
- * Falls back to polling every 10s if SSE is not available.
- * Returns { unreadCount, refresh }
- */
+/** Authenticated SSE, with polling when streaming is unavailable. */
 export function useNotificationStream(user) {
   const [unreadCount, setUnreadCount] = useState(0)
-  const esRef = useRef(null)
-  const pollRef = useRef(null)
-
-  const fetchCount = async () => {
-    try {
-      const res = await api.get('/notifications')
-      setUnreadCount(res.data.unread_count || 0)
-    } catch { /* silent */ }
-  }
+  const refreshRef = useRef(async () => {})
 
   useEffect(() => {
+    setUnreadCount(0)
     if (!user) return
-
-    // Try SSE first
-    const token = localStorage.getItem('token') || ''
-    try {
-      const es = new EventSource(`${api.defaults.baseURL}/notifications/stream?token=${token}`)
-      esRef.current = es
-
-      es.addEventListener('notification', (e) => {
-        try {
-          const data = JSON.parse(e.data)
-          setUnreadCount(data.unread_count || 0)
-        } catch { /* silent */ }
-      })
-
-      es.onerror = () => {
-        // SSE failed, fallback to polling
-        es.close()
-        startPolling()
-      }
-    } catch {
+    const controller = new AbortController()
+    let active = true, polling = null
+    const fetchCount = async () => {
+      if (!active) return
+      try {
+        const res = await api.get('/notifications', { signal: controller.signal })
+        if (active) setUnreadCount(res.data.unread_count || 0)
+      } catch { /* A failed badge request does not interrupt the page. */ }
+    }
+    refreshRef.current = fetchCount
+    const startPolling = () => {
+      if (active && !polling) polling = setInterval(fetchCount, 10000)
+    }
+    fetchCount()
+    const token = localStorage.getItem('yangrent_token') || localStorage.getItem('troflow_token')
+    if (token) {
+      readNotificationStream({
+        url: `${api.defaults.baseURL.replace(/\/$/, '')}/notifications/stream`,
+        token,
+        signal: controller.signal,
+        onNotification: data => { if (active) setUnreadCount(data.unread_count) },
+      }).then(startPolling, startPolling)
+    } else {
       startPolling()
     }
-
-    function startPolling() {
-      if (pollRef.current) return
-      fetchCount()
-      pollRef.current = setInterval(fetchCount, 10000)
-    }
-
     return () => {
-      esRef.current?.close()
-      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+      active = false
+      controller.abort()
+      clearInterval(polling)
+      refreshRef.current = async () => {}
     }
   }, [user])
 
-  return { unreadCount, refresh: fetchCount }
+  return { unreadCount, refresh: () => refreshRef.current() }
 }

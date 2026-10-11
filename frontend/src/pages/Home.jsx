@@ -7,15 +7,15 @@ import { RoomCardSkeleton } from '../components/ui'
 import { useMap } from '../context/MapContext'
 import { BRAND, PROPERTY_TYPES } from '../config/brand'
 
-const HERO_IMG = '/images/properties/property-001/01-cover.webp'
+const HERO_IMG = '/images/yangrent-placeholder.svg'
 const districts = ['Cầu Giấy', 'Thanh Xuân', 'Đống Đa', 'Hai Bà Trưng', 'Nam Từ Liêm', 'Hà Đông', 'Ba Đình', 'Tây Hồ']
 const categories = [
-  { type: 'RENTAL_ROOM', label: 'Phòng cho thuê', desc: 'Phù hợp sinh viên, người đi làm', image: '/images/properties/property-008/01-cover.webp' },
-  { type: 'STUDIO', label: 'Studio', desc: 'Không gian riêng, gọn và tiện', image: '/images/properties/property-002/01-cover.webp' },
-  { type: 'APARTMENT', label: 'Căn hộ', desc: 'Nhiều tiện nghi, ở dài hạn', image: '/images/properties/property-010/01-cover.webp' },
-  { type: 'WHOLE_HOUSE', label: 'Nhà nguyên căn', desc: 'Cho gia đình hoặc nhóm bạn', image: '/images/properties/property-015/01-cover.webp' },
-  { type: 'SHARED_ROOM', label: 'Ở ghép', desc: 'Chia sẻ chi phí hợp lý', image: '/images/properties/property-003/01-cover.webp' },
-  { type: 'MINI_APARTMENT', label: 'Chung cư mini', desc: 'Riêng tư, đủ tiện nghi cơ bản', image: '/images/properties/property-011/01-cover.webp' },
+  { type: 'RENTAL_ROOM', label: 'Phòng cho thuê', desc: 'Phù hợp sinh viên, người đi làm', image: '/images/yangrent-placeholder.svg' },
+  { type: 'STUDIO', label: 'Studio', desc: 'Không gian riêng, gọn và tiện', image: '/images/yangrent-placeholder.svg' },
+  { type: 'APARTMENT', label: 'Căn hộ', desc: 'Nhiều tiện nghi, ở dài hạn', image: '/images/yangrent-placeholder.svg' },
+  { type: 'WHOLE_HOUSE', label: 'Nhà nguyên căn', desc: 'Cho gia đình hoặc nhóm bạn', image: '/images/yangrent-placeholder.svg' },
+  { type: 'SHARED_ROOM', label: 'Ở ghép', desc: 'Chia sẻ chi phí hợp lý', image: '/images/yangrent-placeholder.svg' },
+  { type: 'MINI_APARTMENT', label: 'Chung cư mini', desc: 'Riêng tư, đủ tiện nghi cơ bản', image: '/images/yangrent-placeholder.svg' },
 ]
 
 function PropertySection({ eyebrow, title, subtitle, items, loading, link = '/rooms' }) {

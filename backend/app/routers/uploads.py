@@ -12,6 +12,7 @@ from app.core.deps import require_auth, require_landlord
 from app.core.exceptions import AppError, ForbiddenError, NotFoundError
 from app.database import get_db
 from app.schemas.common import ok
+from app.schemas.video import RoomVideoRequest, VideoURLRequest
 from app.services import storage_service
 
 router = APIRouter(prefix="/uploads", tags=["uploads"])
@@ -64,30 +65,13 @@ async def upload_image(request: Request, user=Depends(require_auth)):
 
 # ---------- Video endpoints ----------
 @router.post("/video")
-def upload_video_url(request, user=Depends(require_landlord)):
+def upload_video_url(data: VideoURLRequest, user=Depends(require_landlord), db=Depends(get_db)):
     """Upload video URL (YouTube, Vimeo, hoac URL truc tiep)."""
-    import json as _json
-    from app.models.room import Room
     from app.services.room_service import get_room_or_404
-    ct = (request.headers.get('content-type') or '').lower()
-    if 'application/json' not in ct:
-        raise AppError(400, "Dung JSON")
-    import asyncio; body = asyncio.get_event_loop().run_until_complete(request.body())
-    data = _json.loads(body)
-    room_id = data.get('room_id')
-    video_url = (data.get('video_url') or '').strip()
-    title = (data.get('title') or '').strip()
-    if not video_url or not video_url.startswith('http'):
-        raise AppError(400, "URL video khong hop le")
-    room = get_room_or_404(get_db().__next__(), room_id) if room_id else None
+    room = get_room_or_404(db, data.room_id) if data.room_id else None
     if room and room.landlord_id != user.id and not user.has_role('ADMIN'):
         raise ForbiddenError("Ban khong so huu phong nay")
-    # Validate video URL format
-    valid_domains = ['youtube.com', 'youtu.be', 'vimeo.com', 'storage.googleapis.com', 'supabase']
-    if not any(d in video_url for d in valid_domains):
-        if not video_url.startswith('http'):
-            raise AppError(400, "Chi ho tro URL video tu YouTube/Vimeo/Supabase Storage")
-    return ok({"url": video_url, "title": title})
+    return ok({"url": data.video_url, "title": data.title})
 
 
 @router.get("/room-videos/{room_id}")
@@ -98,23 +82,14 @@ def get_room_videos(room_id: int, db=Depends(get_db)):
 
 
 @router.post("/room-videos")
-def add_room_video(request, user=Depends(require_landlord), db=Depends(get_db)):
-    import json as _json
-    from app.models.room import Room
+def add_room_video(data: RoomVideoRequest, user=Depends(require_landlord), db=Depends(get_db)):
     from app.models.room_video import RoomVideo
     from app.services.room_service import get_room_or_404
-    import asyncio; body = asyncio.get_event_loop().run_until_complete(request.body())
-    data = _json.loads(body)
-    room_id = data.get('room_id')
-    video_url = (data.get('video_url') or '').strip()
-    title = (data.get('title') or '').strip()
-    if not video_url:
-        raise AppError(400, "Thieu URL video")
-    room = get_room_or_404(db, room_id)
+    room = get_room_or_404(db, data.room_id)
     if room.landlord_id != user.id and not user.has_role('ADMIN'):
         raise ForbiddenError("Ban khong so huu phong nay")
-    existing_count = db.query(RoomVideo).filter(RoomVideo.room_id == room_id).count()
-    vid = RoomVideo(room_id=room_id, video_url=video_url, title=title, sort_order=existing_count)
+    existing_count = db.query(RoomVideo).filter(RoomVideo.room_id == data.room_id).count()
+    vid = RoomVideo(room_id=data.room_id, video_url=data.video_url, title=data.title, sort_order=existing_count)
     db.add(vid)
     db.commit()
     db.refresh(vid)
@@ -123,6 +98,7 @@ def add_room_video(request, user=Depends(require_landlord), db=Depends(get_db)):
 
 @router.delete("/room-videos/{video_id}")
 def delete_room_video(video_id: int, user=Depends(require_landlord), db=Depends(get_db)):
+    from app.models.room import Room
     from app.models.room_video import RoomVideo
     vid = db.query(RoomVideo).filter(RoomVideo.id == video_id).first()
     if not vid:

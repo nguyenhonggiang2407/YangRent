@@ -1,287 +1,78 @@
 # YangRent
 
-**YangRent – Thuê nhà, thuê phòng đúng nhu cầu**  
-**Slogan:** *Tìm đúng nơi. Ở đúng gu.*
+YangRent is a Vietnamese rental housing portfolio project with a React/Vite frontend and a FastAPI/SQLAlchemy backend. It includes JWT authentication and roles for administrators, landlords, tenants and users; property search and favorites; roommate listings; booking requests; conversations and notifications; and landlord tools for contracts, invoices, meters and maintenance. Recommendation and assistant features currently use rule-based/demo logic.
 
-YangRent là nền tảng full-stack tìm kiếm và quản lý nhà, phòng và căn hộ cho thuê. 
+This repository contains reviewed application source and migrations. It contains no live database, accounts, uploaded photos, production configuration or signing credentials. The optional local demo has three clearly fictional users and three fictional listings with an original SVG placeholder. It is not a live rental service or a deployed production backup.
 
-## Mục tiêu sản phẩm
+## Local setup
 
-YangRent phục vụ ba nhóm chính:
-
-- **Người tìm thuê:** tìm phòng, studio, căn hộ, nhà nguyên căn, lưu yêu thích, gửi yêu cầu giữ chỗ, tìm người ở ghép và nhận gợi ý YangMatch.
-- **Chủ nhà:** đăng tin, quản lý bất động sản, người thuê, hợp đồng, hóa đơn, điện nước, sửa chữa và hội thoại.
-- **Quản trị viên:** quản lý người dùng, kiểm duyệt tin, báo cáo vi phạm và thống kê hệ thống.
-
-## Tính năng chính
-
-- Auth + JWT + bcrypt.
-- RBAC: `ADMIN`, `LANDLORD`, `TENANT`, `USER`.
-- Tìm kiếm, lọc, sắp xếp và phân trang chỗ ở.
-- 6 loại chỗ ở: phòng cho thuê, studio, chung cư mini, căn hộ, nhà nguyên căn, ở ghép.
-- Property detail + gallery + lightbox.
-- Favorite, report, yêu cầu giữ chỗ.
-- Dashboard chủ nhà/người thuê/admin.
-- Hợp đồng, hóa đơn, thanh toán demo, chỉ số điện nước.
-- Maintenance request.
-- Chat + notification.
-- Roommate matching.
-- **YangMatch**: recommendation rule-based theo ngân sách, khu vực, loại chỗ ở và tiện nghi. Không tuyên bố machine learning khi chưa có model ML thật.
-- Supabase PostgreSQL + Supabase Storage tùy chọn.
-- Seed 30 listing demo tại Hà Nội.
-
-## Kiến trúc
+Use Python 3.10+ and Node 20+; the reviewed application was checked with Python 3.12 and Node 24.
 
 ```text
-YangRent/
-├── backend/                    # FastAPI + SQLAlchemy
-│   ├── app/
-│   │   ├── core/               # Security, auth dependencies, exceptions
-│   │   ├── models/             # ORM models
-│   │   ├── routers/            # REST API
-│   │   ├── schemas/            # Pydantic schemas
-│   │   └── services/           # Business logic
-│   ├── migrations/             # Alembic
-│   ├── seed/                   # Seed data + image mapping
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/                   # React 18 + Vite + Tailwind
-│   ├── public/images/properties/
-│   ├── src/
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── config/brand.js
-│   │   ├── context/
-│   │   ├── pages/
-│   │   └── utils/
-│   └── .env.example
-├── deploy/
-├── docs/
-│   └── IMAGE_SOURCES.md
-├── CHANGELOG_FINAL.md
-├── DEPLOY_HELIOHOST.md
-├── TEST_REPORT.md
-└── README.md
-```
-
-## Công nghệ
-
-### Frontend
-
-- React 18
-- Vite 5
-- Tailwind CSS 3
-- Axios
-- React Router
-- Lucide React
-- Leaflet
-- Recharts
-
-### Backend
-
-- Python 3.11+
-- FastAPI
-- SQLAlchemy 2
-- Pydantic 2
-- JWT
-- bcrypt
-- Alembic
-- PostgreSQL / SQLite
-
-## Chạy local
-
-### Backend
-
-```bash
 cd backend
 python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS/Linux
-source .venv/bin/activate
-
-pip install -r requirements.txt
-cp .env.example .env
-python seed/seed.py
-python run.py
+# Activate .venv for your operating system.
+python -m pip install -r requirements-dev.txt
+# Copy .env.example to .env.
 ```
 
-Backend mặc định: `http://127.0.0.1:8000`  
-Swagger: `http://127.0.0.1:8000/docs`
+Generate two independent signing keys locally and put them in `SECRET_KEY` and `JWT_SECRET` in the private `.env`. Each must have at least 32 characters; missing or short values prevent startup.
 
-### Frontend
+```text
+python -c "import secrets; print(secrets.token_urlsafe(48)); print(secrets.token_urlsafe(48))"
+```
 
-```bash
+For local development, create the new fictional database described below, then set `DATABASE_URL=sqlite:///./yangrent-demo.db` in your private environment and start the API. The reviewed Alembic head migration uses PostgreSQL-specific schema queries; do not run it against SQLite.
+
+```text
+python -m seed.seed --local-demo
+# Set DATABASE_URL=sqlite:///./yangrent-demo.db in the private environment.
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+In another terminal:
+
+```text
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
-Frontend mặc định: `http://localhost:5173`.
+The Vite development server proxies `/api` to `127.0.0.1:8000`. Open the local URL it displays. Register your own local account; self-registration cannot grant administrator roles.
 
-## Production build
+To provision a new administrator in your privately configured and migrated database, run `python provision_admin.py --create-admin` from `backend`. Confirm the explicit prompt, enter your own email/name and a privately generated password through hidden prompts. Existing accounts are refused; their passwords and roles are never overwritten. This command has no preset credentials and prints none.
 
-```bash
+## Optional fictional local demo
+
+After configuring the private signing keys, run this command from `backend` before starting the API:
+
+```text
+python -m seed.seed --local-demo
+```
+
+It creates a **new** `yangrent-demo.db` in the current directory with three fictional accounts and three listings. The demo initializer creates its own local schema, ignores any configured remote database, refuses an existing demo file, and has no reset option. It prints newly generated passwords only for that explicit local run. Set `DATABASE_URL=sqlite:///./yangrent-demo.db` in your private environment to use it locally. Do not expose demo accounts on a public host. The demo includes no phone numbers, personal photos, real addresses or map coordinates.
+
+## Checks and current limits
+
+```text
 cd frontend
-npm ci
+npm test
 npm run build
 ```
 
-Output nằm trong `frontend/dist/`.
-
-> Không commit `node_modules`, `.venv`, `.env`, database local hoặc secret.
-
-## Database
-
-Mặc định local:
-
-```env
-DATABASE_URL=sqlite:///./troflow.db
-```
-
-Tên file SQLite kỹ thuật cũ được giữ lại để tránh migration không cần thiết; tên này không phải brand hiển thị.
-
-Supabase PostgreSQL:
-
-```env
-DATABASE_URL=postgresql://...
-SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=YOUR_BACKEND_ONLY_KEY
-```
-
-## Seed data
-
-Seed hiện có **30 listing**:
-
-- 10 phòng cho thuê
-- 6 studio
-- 5 chung cư mini
-- 4 căn hộ
-- 3 nhà nguyên căn
-- 2 chỗ ở ghép
-
-Dữ liệu tập trung tại Hà Nội với giá, diện tích, vị trí và nội dung demo có tính nhất quán.
-
-Chạy:
-
-```bash
-cd backend
-python seed/seed.py
-```
-
-Reset toàn bộ dữ liệu demo:
-
-```bash
-python seed/seed.py --reset
-```
-
-## Tài khoản demo
-
-| Vai trò | Email | Mật khẩu |
-|---|---|---|
-| Admin | `admin@yangrent.vn` | `admin123` |
-| Chủ nhà | `hung.nguyen@yangrent.vn` | `yangrent123` |
-| Người thuê | `lan.vu@yangrent.vn` | `yangrent123` |
-| User | `khoi.tran@yangrent.vn` | `yangrent123` |
-
-**Bắt buộc đổi mật khẩu demo trước khi dùng với dữ liệu thật.**
-
-## API chính
-
-Prefix mặc định: `/api`.
-
 ```text
-POST   /auth/register
-POST   /auth/login
-GET    /auth/me
-
-GET    /rooms
-GET    /rooms/featured
-GET    /rooms/meta
-GET    /rooms/:id
-POST   /rooms
-PUT    /rooms/:id
-DELETE /rooms/:id
-POST   /rooms/:id/favorite
-POST   /rooms/:id/book
-
-GET    /roommates
-POST   /roommates
-
-GET    /dashboard/landlord
-GET    /dashboard/tenant
-GET    /admin/overview
-
-POST   /contracts
-POST   /invoices
-POST   /meters
-POST   /maintenance
-
-GET    /chat/conversations
-POST   /chat/conversations
-GET    /notifications
-
-GET    /ai/recommend
-GET    /ai/suspicious/:room_id
+cd backend
+python -m unittest discover -s tests -v
 ```
 
-Response chuẩn:
-
-```json
-{
-  "success": true,
-  "data": {},
-  "message": "..."
-}
-```
-
-## Hình ảnh
-
-- 15 listing đầu dùng WebP local trong `frontend/public/images/properties/`.
-- 15 listing còn lại dùng Unsplash remote fallback trong seed.
-- `RoomImage.is_primary` xác định cover.
-- `RoomImage.sort_order` xác định thứ tự gallery.
-- Frontend dùng `SmartImage` để fallback khi ảnh lỗi.
-- Ảnh ngoài viewport được lazy-load.
-
-Chi tiết nguồn và attribution: [`docs/IMAGE_SOURCES.md`](docs/IMAGE_SOURCES.md).
-
-## Bảo mật
-
-- Password hash bằng bcrypt.
-- JWT secret tách khỏi source.
-- Backend kiểm tra quyền và ownership; frontend chỉ là lớp UX.
-- SQLAlchemy giảm rủi ro SQL injection khi dùng ORM đúng cách.
-- Pydantic validation cho request.
-- CORS cấu hình qua environment.
-- `.env` nằm trong `.gitignore`.
-- `SUPABASE_SERVICE_ROLE_KEY` chỉ dùng ở backend.
-- Không đóng gói `.env` thật trong ZIP bàn giao.
+The prior reviewed source passed seven notification stream tests, eight backend route/auth/ownership tests, a Vite production build and local fictional dashboard/detail desktop and mobile checks. The separate publication preparation also tests the local seed safeguards and signing-key requirements. These checks do not establish deployed provider compatibility or external storage/map/media behavior. One original local notification eager-load error was observed; the later restart and final navigation passed, but its cause remains unconfirmed.
 
 ## Deployment
 
-Xem [`DEPLOY_HELIOHOST.md`](DEPLOY_HELIOHOST.md).
+See [DEPLOYMENT_NOTES.md](DEPLOYMENT_NOTES.md). A frontend build alone does not host the API. Production needs a separately configured ASGI backend, persistent database, private signing keys, exact CORS origin and storage for image uploads. No hosted instance or uptime is claimed by this source preparation.
 
-Lưu ý quan trọng: HelioHost là shared hosting và module Python khả dụng phụ thuộc server. Với project FastAPI/SQLAlchemy, phương án dễ vận hành hơn thường là:
+Original stock property photos and the unrelated bitmap were omitted because supplied provenance did not establish redistribution rights. Static demo imagery uses the included SVG. Fonts, maps, panorama assets and QR generation may contact external providers at runtime; those integrations were not verified during publication preparation. QR generation sends the encoded invoice QR content to that provider.
 
-```text
-Frontend React build → HelioHost
-Backend FastAPI      → Render
-Database/Storage     → Supabase
-```
+## Source and licensing
 
-Nếu server HelioHost của bạn đã có đủ module FastAPI/SQLAlchemy/a2wsgi/bcrypt/PostgreSQL driver, backend cũng có thể thử chạy qua WSGI adapter.
-
-## Tài liệu bàn giao
-
-- `README.md` – tổng quan project.
-- `CHANGELOG_FINAL.md` – thay đổi từ TROFLOW sang YangRent.
-- `TEST_REPORT.md` – kết quả kiểm thử và giới hạn môi trường.
-- `DEPLOY_HELIOHOST.md` – hướng dẫn triển khai.
-- `docs/IMAGE_SOURCES.md` – image attribution và mapping.
-
-## License
-
-Dự án phục vụ học tập, đồ án và portfolio. Hình ảnh bên thứ ba tuân theo điều khoản của nền tảng nguồn; xem `docs/IMAGE_SOURCES.md`.
+See [SOURCE_NOTICE.md](SOURCE_NOTICE.md). No license grant for the original application was present in the supplied source. This repository does not invent one. Third-party dependencies retain their own licenses and are installed separately; dependency directories are not vendored.

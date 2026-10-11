@@ -119,7 +119,7 @@ export default function Header() {
               )}
 
               <button onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); setNotifOpen(false) }} className="flex items-center gap-2 rounded-xl p-1.5 pr-2 hover:bg-ink-50" aria-label="Mở menu tài khoản">
-                <Avatar name={user.full_name} src={user.avatar_url} size="sm" />
+                <Avatar name={user.full_name} src={user.avatar_url} size={32} />
                 <ChevronDown size={15} className="hidden text-ink-400 sm:block" />
               </button>
 

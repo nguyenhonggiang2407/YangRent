@@ -1,7 +1,9 @@
 # Secrets - never commit
 .env
 *.env
+.env.*
 !.env.example
+!.env.sample
 
 # Python
 __pycache__/
@@ -20,3 +22,21 @@ deploy/tunnel/cloudflared.exe
 # Logs / DB
 *.log
 troflow.db
+*.db
+*.sqlite
+*.sqlite3
+.build-temp/
+HANDOFF.md
+.vercel/
+
+# User data and private publication artifacts
+uploads/
+backups/
+*.bak
+*.backup
+*.zip
+*.tar
+*.gz
+*.pem
+*.key
+private/

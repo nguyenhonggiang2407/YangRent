@@ -1,5 +1,6 @@
 """Cấu hình ứng dụng - đọc từ biến môi trường (.env)."""
 from functools import lru_cache
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,8 +12,8 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
 
     # Security
-    SECRET_KEY: str = "yangrent-dev-secret-key-change-me-in-production"
-    JWT_SECRET: str = "yangrent-dev-jwt-secret-change-me-in-production-2026"
+    SECRET_KEY: str = Field(min_length=32)
+    JWT_SECRET: str = Field(min_length=32)
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 ngày
 
