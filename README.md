@@ -69,6 +69,8 @@ The prior reviewed source passed seven notification stream tests, eight backend 
 
 ## Deployment
 
+For Supabase TLS, the included public CA supports `sslmode=verify-full&sslrootcert=certs/supabase-ca.crt` when commands run from `backend`; see the deployment notes for provenance and path details.
+
 See [DEPLOYMENT_NOTES.md](DEPLOYMENT_NOTES.md). A frontend build alone does not host the API. Production needs a separately configured ASGI backend, persistent database, private signing keys, exact CORS origin and storage for image uploads. No hosted instance or uptime is claimed by this source preparation.
 
 Original stock property photos and the unrelated bitmap were omitted because supplied provenance did not establish redistribution rights. Static demo imagery uses the included SVG. Fonts, maps, panorama assets and QR generation may contact external providers at runtime; those integrations were not verified during publication preparation. QR generation sends the encoded invoice QR content to that provider.
