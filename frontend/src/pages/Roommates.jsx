@@ -67,7 +67,7 @@ export default function Roommates() {
         <div>
           <h1 className="font-display text-3xl font-extrabold text-ink-900">Tìm người ở ghép</h1>
           <p className="mt-1 text-sm text-ink-500">
-            {data ? `${meta?.total} bài đăng` : 'Tìm bạn ở ghép phù hợp với AI Match'}
+            {data ? `${meta?.total} bài đăng` : 'Tìm bạn ở ghép phù hợp với nhu cầu của bạn'}
           </p>
         </div>
         <Link to={user ? '/roommates/new' : '/login'} className="btn-primary">

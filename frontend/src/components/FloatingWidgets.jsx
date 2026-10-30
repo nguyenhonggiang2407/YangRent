@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowUp, Bot, Cpu, ScanLine, Sparkles, Users, X } from 'lucide-react'
 
-// Nút nổi góc dưới phải: Chat AI + Back to top
+// Nút nổi góc dưới phải: tiện ích tìm phòng và về đầu trang
 export default function FloatingWidgets() {
   const navigate = useNavigate()
   const [showTop, setShowTop] = useState(false)
@@ -16,8 +16,8 @@ export default function FloatingWidgets() {
   }, [])
 
   const actions = [
-    { to: '/ai-recommend', icon: Sparkles, label: 'AI đề xuất phòng', desc: 'Gợi ý phòng phù hợp với bạn' },
-    { to: '/roommates', icon: Users, label: 'AI Match ở ghép', desc: 'Tìm người ở ghép tương thích' },
+    { to: '/ai-recommend', icon: Sparkles, label: 'Gợi ý phòng', desc: 'Gợi ý phòng phù hợp với bạn' },
+    { to: '/roommates', icon: Users, label: 'Tìm bạn ở ghép', desc: 'Tìm người ở ghép tương thích' },
     { to: '/ai-recommend', icon: ScanLine, label: 'OCR điện nước', desc: 'Đọc chỉ số công tơ từ ảnh' },
     { to: '/ai-recommend', icon: Cpu, label: 'Dự báo chi phí', desc: 'Ước tính tiền tháng sau' },
   ]
@@ -35,7 +35,7 @@ export default function FloatingWidgets() {
         <ArrowUp size={18} />
       </button>
 
-      {/* Chat AI */}
+      {/* Tiện ích tìm phòng */}
       <div className="fixed bottom-4 right-4 z-40 sm:right-6">
         {aiOpen && (
           <div className="absolute bottom-16 right-0 w-72 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-lift">
@@ -45,13 +45,13 @@ export default function FloatingWidgets() {
                   <Bot size={17} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">Trợ lý AI</p>
+                  <p className="text-sm font-bold text-white">Tiện ích tìm phòng</p>
                   <p className="text-[11px] text-brand-100">YangRent Smart Assistant</p>
                 </div>
               </div>
               <button
                 onClick={() => setAiOpen(false)}
-                aria-label="Đóng trợ lý AI"
+                aria-label="Đóng tiện ích tìm phòng"
                 className="rounded-lg p-1 text-white/80 transition hover:bg-white/15 hover:text-white"
               >
                 <X size={16} />
@@ -80,7 +80,7 @@ export default function FloatingWidgets() {
 
         <button
           onClick={() => setAiOpen(!aiOpen)}
-          aria-label="Mở trợ lý AI"
+          aria-label="Mở tiện ích tìm phòng"
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lift transition hover:scale-105 hover:shadow-xl"
         >
           {aiOpen ? <X size={22} /> : <Bot size={24} className="transition group-hover:rotate-12" />}

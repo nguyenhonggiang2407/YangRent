@@ -39,8 +39,8 @@ export default function AIRecommend() {
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">YangRent · Recommendation</p>
         <h1 className="mt-2 font-display text-3xl font-extrabold text-ink-900">YangMatch</h1>
         <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-ink-500">
-          Chọn ngân sách, khu vực và loại chỗ ở. YangMatch xếp hạng các listing phù hợp bằng
-          <strong className="font-semibold text-ink-700"> rule-based scoring</strong>; đây không phải mô hình machine learning.
+          Chọn ngân sách, khu vực và loại chỗ ở. YangMatch xếp hạng phòng theo
+          <strong className="font-semibold text-ink-700"> mức độ phù hợp với nhu cầu của bạn</strong>.
         </p>
       </div>
 

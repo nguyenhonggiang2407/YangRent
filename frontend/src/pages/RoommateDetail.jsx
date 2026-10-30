@@ -168,7 +168,7 @@ export default function RoommateDetail() {
             </div>
           </div>
 
-          {/* AI Match */}
+          {/* Tìm bạn ở ghép */}
           <div className="card mt-6 overflow-hidden">
             <div className="flex flex-col items-start justify-between gap-4 border-b border-ink-100 p-6 sm:flex-row sm:items-center">
               <div className="flex items-center gap-3">
@@ -176,13 +176,13 @@ export default function RoommateDetail() {
                   <Cpu size={22} />
                 </div>
                 <div>
-                  <h3 className="font-display text-base font-bold text-ink-900">AI Match - Tìm người phù hợp</h3>
+                  <h3 className="font-display text-base font-bold text-ink-900">Tìm người ở ghép phù hợp</h3>
                   <p className="text-xs text-ink-400">Tính điểm dựa trên khu vực, ngân sách, thời gian chuyển vào</p>
                 </div>
               </div>
               <button onClick={runMatch} className="btn-primary" disabled={matching}>
                 {matching ? <Spinner size={16} className="text-white" /> : <Sparkles size={16} />}
-                {matches ? 'Chạy lại' : 'Tìm bằng AI'}
+                {matches ? 'Chạy lại' : 'Tìm người phù hợp'}
               </button>
             </div>
 
