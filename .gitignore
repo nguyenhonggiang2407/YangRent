@@ -29,7 +29,7 @@ troflow.db
 HANDOFF.md
 .vercel/
 
-# User data and private publication artifacts
+# Runtime data and private configuration
 uploads/
 backups/
 *.bak
