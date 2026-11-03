@@ -1,0 +1,219 @@
+{
+  "hero": {
+    "id": "studio-window",
+    "title": "Studio có cửa sổ lớn",
+    "alt": "Studio với tường gạch, bàn bếp và cửa sổ đón ánh sáng — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-001/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-001/01-cover.webp",
+      "sha256": "287ca1b30de9507202f807e4d0d9c3b0ac522ca3e67d444b13e4b6278273ed52"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/studio-window-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 59142,
+        "sha256": "26e0e63acd2461cd3e9479665d34879a9e27e1bb8a07211224f32030c3b97b7d"
+      },
+      {
+        "src": "/images/housing/studio-window-1600.webp",
+        "width": 1600,
+        "height": 1067,
+        "bytes": 146144,
+        "sha256": "287ca1b30de9507202f807e4d0d9c3b0ac522ca3e67d444b13e4b6278273ed52"
+      }
+    ]
+  },
+  "RENTAL_ROOM": {
+    "id": "rental-bedroom",
+    "title": "Phòng cho thuê",
+    "alt": "Phòng ngủ có giường, tủ và bàn làm việc — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-008/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-008/01-cover.webp",
+      "sha256": "949adfa29b9315125952a18a2ce7364cc735051266f3bf3f712951ba9cd4e8b5"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/rental-bedroom-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 13902,
+        "sha256": "be6fe364ac33a6fe77f0b875ab8ef7e3094cdf0117753605d31a55600ca3e0e3"
+      },
+      {
+        "src": "/images/housing/rental-bedroom-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 37112,
+        "sha256": "31b9ac7b5d239d8e6bbfbae8f4498394ed1f87db0bb7f9198f474bd5ee3687b4"
+      }
+    ]
+  },
+  "STUDIO": {
+    "id": "studio-open-plan",
+    "title": "Studio",
+    "alt": "Studio bố trí giường ngủ và bếp trong một không gian — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-002/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-002/01-cover.webp",
+      "sha256": "9056fe9ad18d1f4b84d1ace43ea9ba6954f6d1eacae395d6da13981f053db551"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/studio-open-plan-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 12776,
+        "sha256": "76907306c29c9738adb26ba1b8bdc3c0a8410c91d18dbf35e9ca81a56f62ff36"
+      },
+      {
+        "src": "/images/housing/studio-open-plan-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 35692,
+        "sha256": "6c6f93f80f73fd6648880ec0b29b6e8242b580bba87fb9a11f69547c9d83eb17"
+      }
+    ]
+  },
+  "APARTMENT": {
+    "id": "apartment-living",
+    "title": "Căn hộ",
+    "alt": "Không gian phòng khách và bếp trong căn hộ — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-010/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-010/01-cover.webp",
+      "sha256": "4eb1409018ea74151c61b6fdafd6067498ef1fc40cc91b6cbfe17fdf5f3a48b2"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/apartment-living-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 21354,
+        "sha256": "9108d3589e6ff601e01dd02de5f05267158dade5385de32af016a62954e9c966"
+      },
+      {
+        "src": "/images/housing/apartment-living-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 63622,
+        "sha256": "913d7b4e344ceefd7c8558bc1cef13b8b403acd00f61d088ac12055c31f103ff"
+      }
+    ]
+  },
+  "WHOLE_HOUSE": {
+    "id": "family-living",
+    "title": "Nhà nguyên căn",
+    "alt": "Phòng khách gia đình có cửa sổ lớn và sofa — ảnh minh họa",
+    "credit": "Fabio Junior Sabino de Oliveira",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-004/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-004/01-cover.webp",
+      "sha256": "4aeddec6d7f3fcd155bbbfaa8f52ebfea98b8aa10efe0a7ab5386e471d6e3ca6"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/family-living-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 21456,
+        "sha256": "ed703600591c28f7076011c94b769462a90d89e1ffd6e4e0bb4b607513859ebb"
+      },
+      {
+        "src": "/images/housing/family-living-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 57696,
+        "sha256": "2eba1e8930fa8dd7e0392d7d7cbcacd73ffee7e607658294cee94a0c7e4af16a"
+      }
+    ]
+  },
+  "SHARED_ROOM": {
+    "id": "shared-kitchen",
+    "title": "Ở ghép",
+    "alt": "Không gian bếp, bàn ăn và sofa dùng chung — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-003/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-003/01-cover.webp",
+      "sha256": "4159b6ae4b32ebc900d91e9bef18504ef899732956fec56e7972dd071ed43352"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/shared-kitchen-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 22094,
+        "sha256": "f02be38360a93d4400562ab5af643f29ddc292b5a4671645f03b64b3cc5df1c7"
+      },
+      {
+        "src": "/images/housing/shared-kitchen-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 63524,
+        "sha256": "57ef8d30faba2a7cf6bcbad6a109b6db8a8136b18ea12c622c53394c7f61e240"
+      }
+    ]
+  },
+  "MINI_APARTMENT": {
+    "id": "mini-apartment",
+    "title": "Chung cư mini",
+    "alt": "Căn hộ nhỏ có khu bếp và bàn ăn — ảnh minh họa",
+    "credit": "Max Vakhtbovych",
+    "provider": "Pexels",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "provenanceUrl": "https://github.com/nguyenhonggiang2407/YangRent/blob/9c9ef82efbb18188616c64c52a7e27849b24e843/frontend/public/images/properties/property-011/01-cover.webp",
+    "originalPhotoPage": null,
+    "recoveredFrom": {
+      "commit": "9c9ef82efbb18188616c64c52a7e27849b24e843",
+      "path": "frontend/public/images/properties/property-011/01-cover.webp",
+      "sha256": "06c318d6396c065d55ae40abb1f6d15d776b940f005f316c05389c63cbd15c0b"
+    },
+    "variants": [
+      {
+        "src": "/images/housing/mini-apartment-480.webp",
+        "width": 480,
+        "height": 320,
+        "bytes": 17532,
+        "sha256": "6b2d243779e336d9ab67ce1c2a9d9f7bd6a4d6ec56326cba7a62912ab57d6d53"
+      },
+      {
+        "src": "/images/housing/mini-apartment-960.webp",
+        "width": 960,
+        "height": 640,
+        "bytes": 48898,
+        "sha256": "6439ec63979cae9cc5f9cda39d7e4d0575432c924733ef1832c8877b2244558a"
+      }
+    ]
+  }
+}

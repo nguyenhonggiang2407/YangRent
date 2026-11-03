@@ -56,13 +56,14 @@ def main():
         for number, room_type in enumerate(("RENTAL_ROOM", "STUDIO", "SHARED_ROOM"), start=1):
             room = Room(landlord_id=users["landlord"].id,
                         title=f"Phòng minh họa {number} — dữ liệu hư cấu",
-                        description="Dữ liệu học tập hư cấu. Không phải tin cho thuê thật.",
+                        description="Dữ liệu học tập hư cấu. Ảnh chụp minh họa từ bộ ảnh Pexels đã lưu của dự án; không phải tin cho thuê thật.",
                         price=number * 1000000, area=18 + number * 4,
                         address="Địa chỉ minh họa — không tồn tại", city="Hà Nội",
                         district="Cầu Giấy", ward="", latitude=None, longitude=None,
                         room_type=room_type, is_featured=True, is_verified=False,
                         moderation_status="APPROVED")
-            room.images = [RoomImage(image_url="/images/yangrent-placeholder.svg",
+            demo_photo = {"RENTAL_ROOM": "rental-bedroom", "STUDIO": "studio-open-plan", "SHARED_ROOM": "shared-kitchen"}[room_type]
+            room.images = [RoomImage(image_url=f"/images/housing/{demo_photo}-960.webp",
                                      is_primary=True, sort_order=0)]
             db.add(room)
         db.commit()

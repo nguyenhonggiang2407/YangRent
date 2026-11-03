@@ -28,6 +28,14 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: housing-photo-browser-checks
+          path: docs/screenshots/home-photos-*.png
+          retention-days: 14
 
   backend:
     runs-on: ubuntu-latest

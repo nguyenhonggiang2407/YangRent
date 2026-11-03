@@ -91,6 +91,17 @@ python -m unittest discover -s tests -v
 Các bài kiểm thử kiểm tra quyền truy cập, dữ liệu demo, cấu hình xác thực và thông báo.
 Những tích hợp như bản đồ và tải ảnh cần kiểm tra thêm trên môi trường đã cấu hình dịch vụ.
 
+## Ảnh chụp
+
+Banner và sáu nhóm chỗ ở dùng ảnh chụp khôi phục từ bộ ảnh cũ của YangRent, với bản WebP cho điện thoại và máy tính. Trang `/photo-credits` ghi tác giả và bản ảnh đã lưu. Ảnh chỉ minh họa loại không gian; tin đăng dùng ảnh của người đăng. Xem [nguồn ảnh và phạm vi sử dụng](docs/photo-sources.md).
+
+Kiểm tra giao diện sau khi build:
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
 ## Cấu trúc
 
 - `frontend/src/`: màn hình, thành phần giao diện và client API.

@@ -58,7 +58,7 @@ class PublicDemoSafety(unittest.TestCase):
                     rooms = db.execute("SELECT title, latitude, longitude, is_verified FROM rooms").fetchall()
                     self.assertEqual(len(rooms), 3)
                     self.assertTrue(all("hư cấu" in row[0] and row[1:] == (None, None, 0) for row in rooms))
-                    self.assertEqual(db.execute("SELECT image_url FROM room_images").fetchall(), [("/images/yangrent-placeholder.svg",)] * 3)
+                    self.assertEqual(db.execute("SELECT image_url FROM room_images ORDER BY id").fetchall(), [(f"/images/housing/{name}-960.webp",) for name in ("rental-bedroom", "studio-open-plan", "shared-kitchen")])
                 passwords.append(credentials)
         self.assertTrue(all(passwords[0][email] != passwords[1][email] for email in passwords[0]))
 

@@ -21,6 +21,7 @@ import PostRoom from './pages/PostRoom'
 import Dashboard from './pages/Dashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import NotFound from './pages/NotFound'
+import PhotoCredits from './pages/PhotoCredits'
 
 // Map Overlay lazy-load (Leaflet + markercluster chỉ tải khi mở bản đồ)
 const MapOverlay = lazy(() => import('./components/map/MapOverlay'))
@@ -52,6 +53,7 @@ export default function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/photo-credits" element={<PhotoCredits />} />
             <Route path="/rooms" element={<RoomList />} />
             <Route path="/rooms/:id" element={<RoomDetail />} />
             <Route path="/roommates" element={<Roommates />} />

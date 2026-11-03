@@ -12,7 +12,7 @@ export default function SmartImage({ src, alt = '', className = '', fallback = F
       {!loaded && <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-ink-100 via-white to-ink-100" />}
       <img
         src={actualSrc}
-        alt={alt || 'Hình ảnh chỗ ở trên YangRent'}
+        alt={failed || !src ? `${alt || 'Chỗ ở trên YangRent'} — chưa có hình ảnh` : (alt || 'Hình ảnh chỗ ở trên YangRent')}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'auto'}
         onLoad={() => setLoaded(true)}

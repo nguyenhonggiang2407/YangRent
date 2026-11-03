@@ -3,19 +3,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, BadgeCheck, Building2, Home as HomeIcon, KeyRound, Map as MapIcon, MapPin, MessageSquare, Plus, Search, ShieldCheck, Sparkles, Users, WalletCards } from 'lucide-react'
 import api from '../api/client'
 import RoomCard from '../components/RoomCard'
+import HousingPhoto from '../components/HousingPhoto'
+import housingPhotos from '../data/housingPhotos.json'
 import { RoomCardSkeleton } from '../components/ui'
 import { useMap } from '../context/MapContext'
 import { BRAND, PROPERTY_TYPES } from '../config/brand'
 
-const HERO_IMG = '/images/yangrent-placeholder.svg'
 const districts = ['Cầu Giấy', 'Thanh Xuân', 'Đống Đa', 'Hai Bà Trưng', 'Nam Từ Liêm', 'Hà Đông', 'Ba Đình', 'Tây Hồ']
 const categories = [
-  { type: 'RENTAL_ROOM', label: 'Phòng cho thuê', desc: 'Phù hợp sinh viên, người đi làm', image: '/images/yangrent-placeholder.svg' },
-  { type: 'STUDIO', label: 'Studio', desc: 'Không gian riêng, gọn và tiện', image: '/images/yangrent-placeholder.svg' },
-  { type: 'APARTMENT', label: 'Căn hộ', desc: 'Nhiều tiện nghi, ở dài hạn', image: '/images/yangrent-placeholder.svg' },
-  { type: 'WHOLE_HOUSE', label: 'Nhà nguyên căn', desc: 'Cho gia đình hoặc nhóm bạn', image: '/images/yangrent-placeholder.svg' },
-  { type: 'SHARED_ROOM', label: 'Ở ghép', desc: 'Chia sẻ chi phí hợp lý', image: '/images/yangrent-placeholder.svg' },
-  { type: 'MINI_APARTMENT', label: 'Chung cư mini', desc: 'Riêng tư, đủ tiện nghi cơ bản', image: '/images/yangrent-placeholder.svg' },
+  { type: 'RENTAL_ROOM', label: 'Phòng cho thuê', desc: 'Phù hợp sinh viên, người đi làm', photo: housingPhotos.RENTAL_ROOM },
+  { type: 'STUDIO', label: 'Studio', desc: 'Không gian riêng, gọn và tiện', photo: housingPhotos.STUDIO },
+  { type: 'APARTMENT', label: 'Căn hộ', desc: 'Nhiều tiện nghi, ở dài hạn', photo: housingPhotos.APARTMENT },
+  { type: 'WHOLE_HOUSE', label: 'Nhà nguyên căn', desc: 'Cho gia đình hoặc nhóm bạn', photo: housingPhotos.WHOLE_HOUSE },
+  { type: 'SHARED_ROOM', label: 'Ở ghép', desc: 'Chia sẻ chi phí hợp lý', photo: housingPhotos.SHARED_ROOM },
+  { type: 'MINI_APARTMENT', label: 'Chung cư mini', desc: 'Riêng tư, đủ tiện nghi cơ bản', photo: housingPhotos.MINI_APARTMENT },
 ]
 
 function PropertySection({ eyebrow, title, subtitle, items, loading, link = '/rooms' }) {
@@ -62,7 +63,7 @@ export default function Home() {
   return (
     <div className="animate-fadeUp">
       <section className="relative min-h-[620px] overflow-hidden lg:min-h-[680px]">
-        <img src={HERO_IMG} alt="Không gian căn hộ sáng, hiện đại" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
+        <HousingPhoto photo={housingPhotos.hero} priority className="absolute inset-0 h-full w-full" sizes="100vw" imageClassName="object-[55%_center]" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink-900/85 via-ink-900/65 to-ink-900/30" />
         <div className="container-x relative flex min-h-[620px] items-center py-16 lg:min-h-[680px]">
           <div className="max-w-3xl">
@@ -86,12 +87,13 @@ export default function Home() {
             <div className="mt-4 flex flex-wrap gap-2 text-sm text-white/80"><span>Gợi ý:</span>{['Cầu Giấy', 'Thanh Xuân', 'Mỹ Đình', 'Hà Đông'].map((d) => <button key={d} onClick={() => navigate(`/rooms?district=${encodeURIComponent(d)}`)} className="font-semibold hover:text-white">{d}</button>)}</div>
           </div>
         </div>
+        <Link to="/photo-credits" className="absolute bottom-4 right-4 rounded-full border border-white/20 bg-black/25 px-3 py-1.5 text-[11px] text-white/90 backdrop-blur hover:bg-black/40 sm:right-6">Ảnh chụp minh họa · Nguồn ảnh</Link>
       </section>
 
       <section className="container-x py-14">
-        <div className="mb-7"><p className="text-sm font-bold uppercase tracking-[0.16em] text-brand-600">Thuê theo nhu cầu</p><h2 className="mt-1 text-2xl font-extrabold text-ink-900 sm:text-3xl">Chọn kiểu chỗ ở phù hợp</h2></div>
+        <div className="mb-7"><p className="text-sm font-bold uppercase tracking-[0.16em] text-brand-600">Thuê theo nhu cầu</p><h2 className="mt-1 text-2xl font-extrabold text-ink-900 sm:text-3xl">Chọn kiểu chỗ ở phù hợp</h2><p className="mt-2 text-xs text-ink-400">Ảnh chụp minh họa cho từng loại không gian sống.</p></div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-          {categories.map((c) => <Link key={c.type} to={`/rooms?room_type=${c.type}`} className="group overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-lift"><div className="aspect-[4/3] overflow-hidden"><img src={c.image} alt={c.label} loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-105" /></div><div className="p-3.5"><h3 className="text-sm font-bold text-ink-900">{c.label}</h3><p className="mt-1 text-xs leading-relaxed text-ink-500">{c.desc}</p></div></Link>)}
+          {categories.map((c) => <Link key={c.type} to={`/rooms?room_type=${c.type}`} className="group overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-lift"><div className="aspect-[4/3] overflow-hidden"><HousingPhoto photo={c.photo} sizes="(min-width: 1024px) 190px, (min-width: 768px) 30vw, 48vw" className="h-full w-full" imageClassName="transition duration-300 group-hover:scale-105" /></div><div className="p-3.5"><h3 className="text-sm font-bold text-ink-900">{c.label}</h3><p className="mt-1 text-xs leading-relaxed text-ink-500">{c.desc}</p></div></Link>)}
         </div>
       </section>
 
