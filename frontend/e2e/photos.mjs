@@ -66,8 +66,10 @@ for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mo
         await image.scrollIntoViewIfNeeded()
         await expect(image).toHaveJSProperty('complete', true)
         const decoded = await image.evaluate((element) => ({ width: element.naturalWidth, src: element.currentSrc }))
-        assert.ok(decoded.width >= 480, 'Photograph must actually decode at a useful resolution')
+        // naturalWidth is density-corrected when a width-descriptor srcset is used.
+        assert.ok(decoded.width > 0, `Photograph must decode: ${JSON.stringify(decoded)}`)
         assert.ok(decoded.src.startsWith(`${base}/images/housing/`) && decoded.src.endsWith('.webp'), 'Photography must be bundled, without external image hotlinks')
+        assert.ok(Number(decoded.src.match(/-(\d+)\.webp$/)?.[1]) >= 480, 'A responsive photograph must use a 480px-or-larger source file')
       }
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'No horizontal overflow')
       await page.evaluate(() => scrollTo(0, 0))
@@ -77,6 +79,9 @@ for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mo
       await expect(page.getByRole('link', { name: 'Nguồn ảnh đã lưu', exact: true })).toHaveCount(7)
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Credits remain readable on mobile')
       assert.deepEqual(errors, [])
+    } catch (error) {
+      await page.screenshot({ path: `../docs/screenshots/home-photos-${name}.png`, fullPage: true })
+      throw error
     } finally { await context.close() }
   })
 }
