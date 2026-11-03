@@ -140,7 +140,7 @@ python -m unittest discover -s tests -v
 
 Các bài kiểm thử kiểm tra quyền truy cập, dữ liệu demo, cấu hình xác thực và thông báo.
 Những tích hợp như bản đồ và tải ảnh cần kiểm tra thêm trên môi trường đã cấu hình dịch vụ.
-Xem [kết quả kiểm tra ngày 03/11/2026](docs/verification.md) để phân biệt unit test,
+Xem [kết quả kiểm tra](docs/verification.md) để phân biệt unit test,
 browser fixture và truy cập dịch vụ public.
 
 ## Ảnh chụp
