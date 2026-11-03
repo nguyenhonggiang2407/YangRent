@@ -1,6 +1,6 @@
 # YangRent
 
-**Hosting:** đã có cấu hình Render Free + Cloudflare Pages. Xem [cấu hình và bước kiểm tra](docs/cloudflare-render.md). Chưa có URL demo được xác minh.
+**Hosting:** cấu hình Render Free + Cloudflare Pages đã sẵn sàng. [Tình trạng dịch vụ đang có](docs/hosting-status.md) ghi rõ bản cũ đã kiểm tra và phần triển khai mã mới còn chờ đăng nhập trang quản lý.
 
 Website tìm phòng và quản lý cho thuê, với giao diện React/Vite và backend FastAPI,
 SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê và người dùng thông thường.
