@@ -1,5 +1,29 @@
 # Tình trạng hosting YangRent — 03/11/2026
 
+## Kiểm tra lại trong đợt audit portfolio
+
+Ngày 03/11/2026, kiểm tra HTTP chỉ đọc từ môi trường Windows cho kết quả:
+
+| URL | Kết quả |
+| --- | --- |
+| `https://yangrent-yang.onrender.com/` | 200, HTML có tiêu đề YangRent |
+| `https://yangrent-yang.onrender.com/rooms` | 200, HTML có tiêu đề YangRent |
+| `https://yangrent-yang.onrender.com/login` | 200, HTML có tiêu đề YangRent |
+| `https://yangrent-yang.onrender.com/api/health` | 200, JSON báo `status: ok`, `database: ok` |
+| `https://yangrent-api.onrender.com/api/health` | 200, JSON |
+
+Trang chủ và API riêng có lần đầu hết thời gian chờ 45 giây, sau đó phản hồi thành công
+khi thử lại. Đây là kết quả truy cập HTTP, chưa chứng minh đăng nhập, ghi dữ liệu,
+asset trên trình duyệt hoặc bản commit đang được triển khai. Không kết luận dịch vụ hỏng
+chỉ từ lần hết thời gian chờ đầu tiên.
+
+Endpoint health của `backend/app/main.py` hiện tại **không truy vấn database**. Kết quả
+`database: ok` từ dịch vụ full-stack cũ là hành vi của bản đang chạy, không được dùng
+để mô tả health check trong source `main` hiện tại. Không sửa cấu hình hay dữ liệu host
+trong đợt audit tài liệu này.
+
+## Ghi nhận triển khai trước đợt audit
+
 | Phần | Trạng thái đã xác minh |
 | --- | --- |
 | Bản full-stack đã có | [yangrent-yang.onrender.com](https://yangrent-yang.onrender.com/) |

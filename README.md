@@ -1,9 +1,13 @@
 # YangRent
 
-**Hosting:** cấu hình Render Free + Cloudflare Pages đã sẵn sàng. [Tình trạng dịch vụ đang có](docs/hosting-status.md) ghi rõ bản cũ đã kiểm tra và phần triển khai mã mới còn chờ đăng nhập trang quản lý.
-
 Website tìm phòng và quản lý cho thuê, với giao diện React/Vite và backend FastAPI,
 SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê và người dùng thông thường.
+
+![Trang chủ YangRent trên máy tính, chạy từ bản build với dữ liệu kiểm thử hư cấu](docs/screenshots/home-photos-desktop.webp)
+
+**Stack:** React 18 · JavaScript · Vite · FastAPI · SQLAlchemy · PostgreSQL (triển khai) / SQLite (demo local).
+
+**Demo:** [Tình trạng hosting](docs/hosting-status.md) phân biệt dịch vụ cũ với mã `main` hiện tại. Cấu hình Render API + Cloudflare Pages có trong repo; chưa có bằng chứng bản `main` hiện tại được triển khai đầy đủ.
 
 ## Chức năng
 
@@ -16,14 +20,59 @@ SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê v�
 Gợi ý phòng và ghép người dùng dựa trên quy tắc tính điểm.
 Phần đọc công tơ và một số công cụ hỗ trợ đang ở dạng demo.
 
+## Vai trò và nghiệp vụ
+
+| Vai trò | Luồng chính trong source |
+| --- | --- |
+| Khách chưa đăng nhập | Tìm kiếm, lọc và xem chi tiết chỗ ở |
+| `USER` | Lưu yêu thích, gửi yêu cầu giữ chỗ, nhắn tin và đăng nhu cầu ở ghép |
+| `LANDLORD` | Đăng tin, xử lý yêu cầu cho phòng mình sở hữu, quản lý hợp đồng, hóa đơn và bảo trì |
+| `TENANT` | Xem hợp đồng, hóa đơn liên quan; gửi yêu cầu và theo dõi dữ liệu của mình |
+| `ADMIN` | Kiểm duyệt và quản trị qua các endpoint dành riêng cho quản trị viên |
+
+Một tài khoản có thể có nhiều vai trò. Backend đọc JWT từ header `Authorization`,
+kiểm tra tài khoản đang hoạt động, sau đó áp dụng role dependency và kiểm tra chủ sở hữu
+ở từng endpoint. Việc ẩn nút trên frontend không thay thế kiểm tra quyền ở API.
+
+Yêu cầu giữ chỗ bắt đầu ở `PENDING`; chủ phòng chấp nhận sẽ chuyển yêu cầu sang
+`ACCEPTED` và phòng sang `RESERVED`. Hợp đồng, hóa đơn và bảo trì có các luồng riêng;
+không mô tả chúng như một giao dịch đặt phòng tự động duy nhất.
+
+## Kiến trúc và dữ liệu
+
+```mermaid
+flowchart LR
+  Browser[React / Vite] -->|HTTPS JSON / bearer JWT| Routes[FastAPI routers + dependencies]
+  Routes --> Services[Business services]
+  Routes --> ORM[SQLAlchemy models / Session]
+  Services --> ORM
+  ORM --> DB[(PostgreSQL)]
+  Routes -->|image uploads| Storage[Supabase Storage - optional]
+```
+
+Các router vừa có phần gọi service vừa có phần truy vấn ORM trực tiếp. Xem
+[kiến trúc, mô hình dữ liệu và giới hạn](docs/architecture.md) để đối chiếu các bảng,
+luồng hợp đồng/hóa đơn và vị trí kiểm tra quyền trong source.
+
 ## Chạy cục bộ
 
-Cần Python 3.10 trở lên và Node.js 20 trở lên.
+Cần Python 3.10 trở lên (cấu hình triển khai và CI dùng Python 3.12).
+Node.js 24 là phiên bản CI hiện tại; cần npm để dùng lockfile đã lưu.
 
-Trong thư mục `backend`, tạo và kích hoạt môi trường ảo:
+Trong thư mục `backend`, tạo và kích hoạt môi trường ảo. PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-dev.txt
+Copy-Item .env.example .env
+```
+
+Trên macOS/Linux:
 
 ```bash
 python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
 cp .env.example .env
 ```
@@ -57,8 +106,9 @@ npm ci
 npm run dev
 ```
 
-Vite chuyển `/api` đến `127.0.0.1:8000`. Trên PowerShell, dùng
-`Copy-Item .env.example .env` thay cho `cp` ở bước sao chép cấu hình.
+Vite chuyển `/api` đến `127.0.0.1:8000`. Nếu PowerShell không cho chạy script
+kích hoạt, dùng `.\.venv\Scripts\python.exe` thay cho `python` trong các lệnh backend;
+không cần thay chính sách máy để chạy dự án.
 
 ## Database và tài khoản quản trị
 
@@ -90,14 +140,17 @@ python -m unittest discover -s tests -v
 
 Các bài kiểm thử kiểm tra quyền truy cập, dữ liệu demo, cấu hình xác thực và thông báo.
 Những tích hợp như bản đồ và tải ảnh cần kiểm tra thêm trên môi trường đã cấu hình dịch vụ.
+Xem [kết quả kiểm tra ngày 03/11/2026](docs/verification.md) để phân biệt unit test,
+browser fixture và truy cập dịch vụ public.
 
 ## Ảnh chụp
 
 Banner và sáu nhóm chỗ ở dùng ảnh chụp khôi phục từ bộ ảnh cũ của YangRent, với bản WebP cho điện thoại và máy tính. Trang `/photo-credits` ghi tác giả và bản ảnh đã lưu. Ảnh chỉ minh họa loại không gian; tin đăng dùng ảnh của người đăng. Xem [nguồn ảnh và phạm vi sử dụng](docs/photo-sources.md).
 
-Ảnh chụp từ bản build đã qua [CI và kiểm tra trình duyệt](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41661305056), dùng API fixture hư cấu để kiểm tra giao diện:
-
-![Giao diện máy tính với ảnh chụp](docs/screenshots/home-photos-desktop.webp)
+Ảnh desktop ở đầu README và ảnh mobile dưới đây được chụp từ bản build đã qua
+[CI và kiểm tra trình duyệt](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41661305056),
+dùng API fixture hư cấu để kiểm tra giao diện; chúng không chứng minh dữ liệu hoặc
+backend của bản triển khai đang hoạt động.
 
 <details><summary>Xem giao diện điện thoại</summary>
 
@@ -123,6 +176,15 @@ npm run test:browser
 
 Xem [hướng dẫn triển khai](docs/deployment.md) để cấu hình CORS, TLS,
 PostgreSQL và lưu ảnh.
+
+## Giới hạn hiện tại
+
+- Thanh toán hóa đơn là mô phỏng: service tạo bản ghi `MOCK-*` và đánh dấu đã thanh toán, chưa kết nối cổng thanh toán.
+- Gợi ý phòng/ở ghép dựa trên quy tắc; không phải mô hình máy học đã được huấn luyện.
+- API `/api/health` của source hiện tại chỉ báo tiến trình đang phản hồi, không truy vấn database.
+- Các trường tiền trong hóa đơn/thanh toán còn dùng số thực; cần đánh giá precision trước khi xử lý giao dịch thật.
+- Chưa khẳng định an toàn khi nhiều người cùng giữ chỗ: kiểm tra yêu cầu đang chờ hiện là truy vấn rồi ghi, chưa có bảo đảm khóa giao dịch cho luồng này.
+- Browser test dùng API fixture; cần kiểm thử tích hợp với PostgreSQL và xác minh đăng nhập, persistence, uploads trên host trước khi coi là bản production.
 
 ## Nguồn và quyền sử dụng
 
