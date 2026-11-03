@@ -30,3 +30,7 @@ Catalog máy đọc: [`housingPhotos.json`](../frontend/src/data/housingPhotos.j
 `npm test` và `npm run build` kiểm tra frontend. `npm run test:browser` chạy Chromium trên bản build với API fixture hư cấu: kiểm tra 7 ảnh thật giải mã được ở màn hình 1440 px và 390 px, không tràn ngang, mở trang ghi nguồn, và ảnh tin đăng lỗi giữ đúng trạng thái chưa có ảnh. Ảnh chụp màn hình được xuất vào `docs/screenshots/home-photos-desktop.png` và `home-photos-mobile.png`. Đây là kiểm tra giao diện với fixture, không phải bằng chứng deploy hoặc dữ liệu thật trên hosting.
 
 Việc sửa ảnh trong GitHub không tự cập nhật dịch vụ YangRent cũ đang dùng source đóng gói và tắt auto-deploy. Tình trạng triển khai: [hosting-status.md](hosting-status.md).
+
+## Kết quả kiểm tra
+
+[CI 41661305056](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41661305056) đạt ở commit `86c4a346e74af445eec8bba38f3c538fbe547b34`: backend, frontend build, 7 bài kiểm tra stream hiện có và 3 bài kiểm tra giao diện ảnh. Các bản xem nhanh WebP trong `docs/screenshots/` được trích từ PNG do CI tạo; ảnh toàn trang nằm trong artifact `housing-photo-browser-checks`. Kết quả này xác minh bản build với API fixture, chưa phải xác nhận bản hosting cũ đã cập nhật.

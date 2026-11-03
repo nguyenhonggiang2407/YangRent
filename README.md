@@ -95,6 +95,16 @@ Những tích hợp như bản đồ và tải ảnh cần kiểm tra thêm trê
 
 Banner và sáu nhóm chỗ ở dùng ảnh chụp khôi phục từ bộ ảnh cũ của YangRent, với bản WebP cho điện thoại và máy tính. Trang `/photo-credits` ghi tác giả và bản ảnh đã lưu. Ảnh chỉ minh họa loại không gian; tin đăng dùng ảnh của người đăng. Xem [nguồn ảnh và phạm vi sử dụng](docs/photo-sources.md).
 
+Ảnh chụp từ bản build đã qua [CI và kiểm tra trình duyệt](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41661305056), dùng API fixture hư cấu để kiểm tra giao diện:
+
+![Giao diện máy tính với ảnh chụp](docs/screenshots/home-photos-desktop.webp)
+
+<details><summary>Xem giao diện điện thoại</summary>
+
+![Giao diện điện thoại với ảnh chụp](docs/screenshots/home-photos-mobile.webp)
+
+</details>
+
 Kiểm tra giao diện sau khi build:
 
 ```bash
