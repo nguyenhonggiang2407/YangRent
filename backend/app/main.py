@@ -2,6 +2,8 @@
 
 Khởi tạo app, CORS, exception handlers và đăng ký toàn bộ routers.
 """
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -57,4 +59,19 @@ def root():
 
 @app.get("/api/health")
 def health():
-    return {"success": True, "data": {"status": "ok"}, "message": "Healthy"}
+    data = {"status": "ok"}
+    if os.environ.get("PORTFOLIO_DEMO") == "true":
+        from sqlalchemy import text
+        from app.database import SessionLocal
+        with SessionLocal() as db:
+            db.execute(text("SELECT 1"))
+        data.update(database="ok", mode="ephemeral-demo",
+                    revision=os.environ.get("RENDER_GIT_COMMIT", "local"))
+    return {"success": True, "data": data, "message": "Healthy"}
+
+
+# Optional same-origin frontend for the separately configured portfolio demo.
+# API-only deployments keep their existing routes and root JSON response.
+if os.environ.get("FRONTEND_DIST_DIR"):
+    from app.static_frontend import install_frontend
+    install_frontend(app, os.environ["FRONTEND_DIST_DIR"])

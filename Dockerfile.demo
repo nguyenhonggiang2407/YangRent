@@ -1,0 +1,22 @@
+# Isolated portfolio demo only. Never use this image with an existing database.
+FROM node:24-alpine AS frontend
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+ENV VITE_API_URL=/api VITE_PORTFOLIO_DEMO=true
+RUN npm run build
+
+FROM python:3.12-slim AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    PORTFOLIO_DEMO=true FRONTEND_DIST_DIR=/app/frontend/dist
+WORKDIR /app
+COPY backend/requirements.txt ./requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt && python -m pip check \
+    && useradd --create-home --uid 10001 demo
+COPY --chown=demo:demo backend/app/ ./backend/app/
+COPY --from=frontend --chown=demo:demo /build/dist/ ./frontend/dist/
+USER demo
+WORKDIR /app/backend
+EXPOSE 10000
+CMD ["python", "-m", "app.portfolio_demo"]

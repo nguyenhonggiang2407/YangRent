@@ -49,6 +49,12 @@ export default function App() {
   return (
     <MapProvider>
       <div className="flex min-h-screen flex-col">
+        {import.meta.env.VITE_PORTFOLIO_DEMO === 'true' && (
+          <aside className="bg-amber-50 px-4 py-2 text-center text-xs leading-relaxed text-amber-900" aria-label="Thông tin bản demo">
+            <strong>Bản demo — dữ liệu hư cấu.</strong>{' '}
+            Bạn có thể đăng ký tài khoản để thử. Dữ liệu sẽ được làm mới khi dịch vụ khởi động lại; hãy dùng thông tin giả.
+          </aside>
+        )}
         <Header />
         <main className="flex-1">
           <Routes>
