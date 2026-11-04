@@ -7,7 +7,9 @@ SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê v�
 
 **Stack:** React 18 · JavaScript · Vite · FastAPI · SQLAlchemy · PostgreSQL (triển khai) / SQLite (demo local).
 
-**Demo:** [Tình trạng hosting](docs/hosting-status.md) phân biệt dịch vụ cũ với mã `main` hiện tại. Cấu hình Render API + Cloudflare Pages có trong repo; chưa có bằng chứng bản `main` hiện tại được triển khai đầy đủ.
+**[Mở Live Demo ↗](https://yangrent-portfolio-demo.onrender.com/)** · [Kết quả triển khai](docs/hosting-status.md) · [Cấu hình demo riêng](docs/free-demo.md)
+
+Demo mới chạy cả React và FastAPI trên một Render Free service, với 6 loại phòng mẫu có ảnh. Đã xác minh HTTPS, đăng ký/đăng nhập, hồ sơ, lọc phòng, lưu/bỏ yêu thích và kiểm tra quyền truy cập trên website thật ngày 04/11/2026. Bạn có thể đăng ký tài khoản bằng thông tin giả để thử; không có tài khoản quản trị công khai. Dữ liệu SQLite và khóa đăng nhập được tạo mới mỗi lần tiến trình khởi động. Dịch vụ miễn phí có thể cần chờ lúc mở lần đầu sau thời gian không hoạt động.
 
 ## Chức năng
 

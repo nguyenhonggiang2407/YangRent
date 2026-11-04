@@ -1,6 +1,26 @@
-# Tình trạng hosting YangRent — 03/11/2026
+# Tình trạng hosting YangRent — 04/11/2026
 
-## Kiểm tra lại trong đợt audit portfolio
+## Live Demo mới — đã xác minh
+
+**[Mở YangRent Live Demo](https://yangrent-portfolio-demo.onrender.com/)**
+
+| Phần | Kết quả |
+| --- | --- |
+| Giao diện + API | Cùng origin HTTPS, React/Vite được phục vụ bởi FastAPI |
+| Render service | `srv-dbla4q3ncjis73d8dbig`, `yangrent-portfolio-demo`, plan `free`, Singapore, một instance |
+| Source đang chạy | `cc081ca717cecb4c20b3d5becafe336436629e4b`, merge [PR #1](https://github.com/nguyenhonggiang2407/YangRent/pull/1) |
+| Deploy | `dep-dbla4qrncjis73d8ddk0`, trạng thái `live`, hoàn tất 04/11/2026 lúc 10:12 GMT+7 |
+| CI | [41765537771](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41765537771) trên đúng merge commit: frontend, backend và build/khởi động Docker đều thành công |
+| Health | `/api/health` trả `database: ok`, `mode: ephemeral-demo`, đúng revision triển khai |
+| Kiểm tra thực tế | 21 kiểm tra tại URL HTTPS thật, hoàn tất 04/11/2026 lúc 17:54 GMT+7 |
+
+Các kiểm tra thực tế gồm HTML/JS/CSS, tải lại các route `/rooms`, `/login`, `/register`, sáu loại phòng hư cấu, chi tiết/lọc phòng, ảnh WebP khớp byte với source, đăng ký và đăng nhập tài khoản thử, hồ sơ, lưu/bỏ yêu thích, chặn tự đăng ký ADMIN và chặn chủ khác sửa phòng không thuộc mình. Không thực hiện thanh toán, gửi tin nhắn hoặc truy cập database của các dịch vụ cũ.
+
+Đây là demo riêng được người dùng chọn triển khai với dữ liệu mẫu. Mỗi tiến trình tạo SQLite tạm và khóa ký mới; dữ liệu sẽ được làm mới khi tiến trình khởi động lại. Không có database, disk hay dịch vụ trả phí được tạo; các dịch vụ YangRent cũ và cấu hình của chúng được giữ nguyên. Khởi động trên gói miễn phí có thể chậm sau thời gian không hoạt động. Không nhập thông tin cá nhân hoặc dữ liệu quan trọng.
+
+Chi tiết cách chạy: [demo riêng](free-demo.md). Có thể chạy lại kiểm tra có bảo vệ bằng `node tools/verify-demo.mjs https://yangrent-portfolio-demo.onrender.com/`; công cụ từ chối ghi tài khoản thử nếu health không xác nhận đúng chế độ demo riêng. Các ghi nhận phía dưới là lịch sử trước đợt triển khai này, không mô tả trạng thái của demo mới.
+
+## Lịch sử: kiểm tra trong đợt audit portfolio 03/11/2026
 
 Ngày 03/11/2026, kiểm tra HTTP chỉ đọc từ môi trường Windows cho kết quả:
 
@@ -35,7 +55,7 @@ trong đợt audit tài liệu này.
 
 Link full-stack phía trên là bản đóng gói đã có trước. Dịch vụ đang dùng source loader cũ, vì vậy link này **không phải bằng chứng rằng nhánh main hiện tại đã được triển khai**. Mã nguồn, giấy phép và thông tin đóng góp của repository vẫn được đánh giá theo source trong GitHub.
 
-## Việc cần hoàn tất cho bản GitHub mới
+## Kế hoạch cũ: cập nhật dịch vụ API có database riêng
 
 Dịch vụ API liên kết đúng repo YangRent nhưng hiện còn build command:
 

@@ -10,4 +10,4 @@ Only `Dockerfile.demo` opts into this behavior. The existing API-only configurat
 
 Deploy the repository root with runtime `docker`, Dockerfile `./Dockerfile.demo`, one instance on plan `free`, and no disk or database resource. Do not attach an environment group or copy credentials from another service. Render injects `PORT`; the demo binds to `0.0.0.0` using one worker.
 
-The public URL is added to README and repository metadata only after deployment and actual HTTPS functionality have been verified.
+Public demo: **https://yangrent-portfolio-demo.onrender.com/**. Deployment and actual HTTPS functionality were verified on 4 November 2026 before adding the link to README and portfolio metadata. See [hosting verification](hosting-status.md).
