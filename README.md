@@ -7,9 +7,15 @@ SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê v�
 
 **Stack:** React 18 · JavaScript · Vite · FastAPI · SQLAlchemy · PostgreSQL (triển khai) / SQLite (demo local).
 
-**[Mở Live Demo ↗](https://yangrent-portfolio-demo.onrender.com/)** · [Kết quả triển khai](docs/hosting-status.md) · [Cấu hình demo riêng](docs/free-demo.md)
+**[Mở Live Demo ↗](https://yangrent-portfolio-demo.onrender.com/)** · [CI](https://github.com/nguyenhonggiang2407/YangRent/actions/workflows/ci.yml) · [Kết quả triển khai](docs/hosting-status.md) · [Cấu hình demo riêng](docs/free-demo.md)
 
 Demo mới chạy cả React và FastAPI trên một Render Free service, với 6 loại phòng mẫu có ảnh. Đã xác minh HTTPS, đăng ký/đăng nhập, hồ sơ, lọc phòng, lưu/bỏ yêu thích và kiểm tra quyền truy cập trên website thật ngày 04/11/2026. Bạn có thể đăng ký tài khoản bằng thông tin giả để thử; không có tài khoản quản trị công khai. Dữ liệu SQLite và khóa đăng nhập được tạo mới mỗi lần tiến trình khởi động. Dịch vụ miễn phí có thể cần chờ lúc mở lần đầu sau thời gian không hoạt động.
+
+## Điểm bắt đầu khi review
+
+- **Phân quyền và chủ sở hữu:** [dependency xác thực/role](backend/app/core/deps.py) và [API phòng/giữ chỗ](backend/app/routers/rooms.py). Các giới hạn đồng thời của luồng giữ chỗ được ghi trong [kiến trúc](docs/architecture.md).
+- **Demo tách biệt:** [kiểm thử khởi tạo demo](backend/tests/test_portfolio_demo.py) xác nhận từ chối database đã cấu hình, chỉ tạo dữ liệu hư cấu và tạo lại khóa khi khởi động.
+- **Bằng chứng kiểm tra:** [workflow CI](.github/workflows/ci.yml) chạy frontend, backend và smoke test Docker; [phạm vi kiểm chứng](docs/verification.md) phân biệt browser fixture với backend live.
 
 ## Chức năng
 
