@@ -140,6 +140,12 @@ def book_room(room_id: int, data: BookingCreateRequest,
               user: User = Depends(require_auth), db: Session = Depends(get_db)):
     from app.models.rental import RentalRequest
     from app.services.chat_service import create_notification
+
+    # Take the database write lock before reading availability or pending requests.
+    # Keep the timestamp unchanged and hold the lock until the booking is committed.
+    rooms = Room.__table__
+    db.execute(rooms.update().where(rooms.c.id == room_id).values(updated_at=rooms.c.updated_at))
+
     room = room_service.get_room_or_404(db, room_id)
     if room.status != "AVAILABLE":
         raise ConflictError("Chỗ ở hiện không khả dụng để giữ chỗ")

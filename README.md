@@ -13,7 +13,8 @@ Demo mới chạy cả React và FastAPI trên một Render Free service, với 
 
 ## Điểm bắt đầu khi review
 
-- **Phân quyền và chủ sở hữu:** [dependency xác thực/role](backend/app/core/deps.py) và [API phòng/giữ chỗ](backend/app/routers/rooms.py). Các giới hạn đồng thời của luồng giữ chỗ được ghi trong [kiến trúc](docs/architecture.md).
+- **Phân quyền và chủ sở hữu:** [dependency xác thực/role](backend/app/core/deps.py) và [API phòng/giữ chỗ](backend/app/routers/rooms.py).
+- **Hai người giữ cùng một phòng:** [kiểm thử đồng thời](backend/tests/test_booking_concurrency.py) gửi hai yêu cầu qua hai kết nối SQLite độc lập. Một yêu cầu được tạo, yêu cầu còn lại nhận HTTP `409`.
 - **Demo tách biệt:** [kiểm thử khởi tạo demo](backend/tests/test_portfolio_demo.py) xác nhận từ chối database đã cấu hình, chỉ tạo dữ liệu hư cấu và tạo lại khóa khi khởi động.
 - **Bằng chứng kiểm tra:** [workflow CI](.github/workflows/ci.yml) chạy frontend, backend và smoke test Docker; [phạm vi kiểm chứng](docs/verification.md) phân biệt browser fixture với backend live.
 
@@ -191,7 +192,7 @@ PostgreSQL và lưu ảnh.
 - Gợi ý phòng/ở ghép dựa trên quy tắc; không phải mô hình máy học đã được huấn luyện.
 - API `/api/health` của source hiện tại chỉ báo tiến trình đang phản hồi, không truy vấn database.
 - Các trường tiền trong hóa đơn/thanh toán còn dùng số thực; cần đánh giá precision trước khi xử lý giao dịch thật.
-- Chưa khẳng định an toàn khi nhiều người cùng giữ chỗ: kiểm tra yêu cầu đang chờ hiện là truy vấn rồi ghi, chưa có bảo đảm khóa giao dịch cho luồng này.
+- Khóa khi tạo yêu cầu giữ chỗ áp dụng cho luồng API này. Cần xem lại riêng các yêu cầu trùng đã tồn tại từ trước và các đường ghi trực tiếp vào database.
 - Browser test dùng API fixture; cần kiểm thử tích hợp với PostgreSQL và xác minh đăng nhập, persistence, uploads trên host trước khi coi là bản production.
 
 ## Nguồn và quyền sử dụng
