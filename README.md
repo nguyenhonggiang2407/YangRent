@@ -121,6 +121,10 @@ không cần thay chính sách máy để chạy dự án.
 
 ## Database và tài khoản quản trị
 
+Cấu hình demo riêng hỗ trợ một [tài khoản xem thử trên máy cục bộ](docs/free-demo.md#optional-shared-login-for-a-local-walkthrough).
+Tài khoản được cấp quyền `USER` và có sẵn một phòng hư cấu trong danh sách yêu thích.
+Điền email và mật khẩu qua biến môi trường của tiến trình demo.
+
 Database dùng khi triển khai là PostgreSQL. Alembic migration hiện có dùng cú pháp riêng
 của PostgreSQL; không chạy chúng trên database SQLite mẫu.
 

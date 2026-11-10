@@ -7,10 +7,12 @@ published; visitors register their own fictional test accounts.
 from __future__ import annotations
 
 import atexit
+from collections import deque
 import os
 import secrets
 import sys
 import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -48,6 +50,24 @@ def _configured_database() -> bool:
 
     return any(key.upper() == "DATABASE_URL" and value and value.strip()
                for key, value in dotenv_values(".env", interpolate=False).items())
+
+
+def _shared_login_credentials() -> tuple[str, str] | None:
+    if os.environ.get("DEMO_LOGIN_ENABLED") != "1":
+        return None
+    from pydantic import EmailStr, TypeAdapter, ValidationError
+
+    email = os.environ.get("DEMO_LOGIN_EMAIL", "").strip().lower()
+    password = os.environ.get("DEMO_LOGIN_PASSWORD", "")
+    try:
+        email = TypeAdapter(EmailStr).validate_python(email)
+    except ValidationError:
+        raise DemoSafetyError("A valid DEMO_LOGIN_EMAIL is required.") from None
+    if email == "portfolio-landlord@example.test" or len(email) > 255:
+        raise DemoSafetyError("DEMO_LOGIN_EMAIL is reserved or too long.")
+    if len(password) < 8 or len(password.encode("utf-8")) > 72:
+        raise DemoSafetyError("DEMO_LOGIN_PASSWORD does not meet the bcrypt length policy.")
+    return email, password
 
 
 def _cleanup_database(environment: DemoEnvironment) -> None:
@@ -106,7 +126,7 @@ def prepare_demo_environment() -> DemoEnvironment:
     return environment
 
 
-def seed_sample_data() -> None:
+def seed_sample_data() -> int | None:
     """Create fictional data only inside this process's reserved empty file."""
     global _seeded
     _require_demo_flag()
@@ -117,6 +137,7 @@ def seed_sample_data() -> None:
         raise DemoSafetyError("The prepared demo database configuration changed.")
     if not environment.database_path.is_file() or environment.database_path.stat().st_size != 0:
         raise DemoSafetyError("The reserved demo database must still be empty.")
+    credentials = _shared_login_credentials()
 
     from sqlalchemy import create_engine
     from sqlalchemy.pool import NullPool
@@ -136,9 +157,12 @@ def seed_sample_data() -> None:
     database.SessionLocal.configure(bind=database.engine)
 
     import bcrypt
+    from app.core.security import hash_password
     from app.models import Amenity, Role, Room, RoomImage, User
+    from app.models.room import Favorite
 
     database.Base.metadata.create_all(database.engine)
+    demo_user_id = None
     with database.SessionLocal() as session:
         roles = {name: Role(name=name, description="Vai trò trong bản demo hư cấu")
                  for name in ("ADMIN", "LANDLORD", "TENANT", "USER")}
@@ -157,6 +181,15 @@ def seed_sample_data() -> None:
                                ("Giường", "BedDouble"))
         }
         session.add_all(amenities.values())
+        demo_user = None
+        if credentials is not None:
+            email, password = credentials
+            demo_user = User(
+                email=email, hashed_password=hash_password(password),
+                full_name="Khách xem thử YangRent", phone="", avatar_url="",
+                is_verified=False, roles=[roles["USER"]],
+            )
+            session.add(demo_user)
         session.flush()
         samples = (
             ("RENTAL_ROOM", "Phòng trọ thoáng sáng", "rental-bedroom", 3200000, 24, "Cầu Giấy", 2),
@@ -186,16 +219,48 @@ def seed_sample_data() -> None:
             room.images = [RoomImage(image_url=f"/images/housing/{photo}-960.webp",
                                      is_primary=True, sort_order=0)]
             session.add(room)
+            if number == 1 and demo_user is not None:
+                session.flush()
+                session.add(Favorite(user_id=demo_user.id, room_id=room.id))
+        if demo_user is not None:
+            demo_user_id = demo_user.id
         session.commit()
     _seeded = True
+    return demo_user_id
+
+
+def _limit_local_logins(app) -> None:
+    from fastapi.responses import JSONResponse
+
+    # The configured shared account is loopback-only and uses one worker.
+    # A single bounded queue is sufficient for this local preview.
+    attempts: deque[float] = deque()
+
+    @app.middleware("http")
+    async def limit_login(request, call_next):
+        if request.method == "POST" and request.url.path.rstrip("/") == "/api/auth/login":
+            now = time.monotonic()
+            while attempts and now - attempts[0] >= 60:
+                attempts.popleft()
+            if len(attempts) >= 12:
+                return JSONResponse(
+                    status_code=429, headers={"Retry-After": "60"},
+                    content={"success": False, "code": "LOGIN_LIMIT",
+                             "message": "Đã thử đăng nhập quá nhiều. Vui lòng đợi một phút."},
+                )
+            attempts.append(now)
+        return await call_next(request)
 
 
 def create_demo_app():
     """Construct the real API only after preparing and seeding its new database."""
     prepare_demo_environment()
-    seed_sample_data()
+    demo_user_id = seed_sample_data()
     from app.main import app
 
+    if demo_user_id is not None:
+        app.state.shared_demo_user_id = demo_user_id
+        _limit_local_logins(app)
     return app
 
 
@@ -210,7 +275,8 @@ def main() -> None:
         raise SystemExit("Portfolio demo startup refused; check its isolated-demo configuration.") from None
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=port, workers=1)
+    host = "127.0.0.1" if getattr(app.state, "shared_demo_user_id", None) else "0.0.0.0"
+    uvicorn.run(app, host=host, port=port, workers=1)
 
 
 if __name__ == "__main__":
