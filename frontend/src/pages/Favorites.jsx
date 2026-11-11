@@ -7,17 +7,18 @@ import { useAuth } from '../context/AuthContext'
 import { EmptyState, ErrorBanner, RoomCardSkeleton } from '../components/ui'
 
 export default function Favorites() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const navigate = useNavigate()
   const [rooms, setRooms] = useState(null)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    if (loading) return
     if (!user) { navigate('/login'); return }
     api.get('/rooms/favorites/me')
       .then((res) => setRooms(res.data))
       .catch((e) => setError(e.message))
-  }, [user, navigate])
+  }, [user, loading, navigate])
 
   return (
     <div className="container-x py-8">

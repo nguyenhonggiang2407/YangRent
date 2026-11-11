@@ -10,9 +10,11 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const submit = async (e) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
     try {
       const user = await login(email, password)
@@ -23,7 +25,7 @@ export default function Login() {
       else if (roles.includes('TENANT')) navigate('/dashboard/tenant')
       else navigate('/')
     } catch (err) {
-      toast(err.message, 'error')
+      setError(err.message || 'Chưa đăng nhập được. Vui lòng thử lại.')
     } finally {
       setLoading(false)
     }
@@ -41,15 +43,16 @@ export default function Login() {
             <p className="mt-1 text-sm text-ink-500">Chào mừng bạn quay trở lại!</p>
           </div>
 
-          <form onSubmit={submit} className="space-y-4">
+          <form onSubmit={submit} aria-busy={loading} className="space-y-4">
             <div>
-              <label className="label">Email</label>
-              <input type="email" className="input" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+              <label className="label" htmlFor="login-email">Email</label>
+              <input id="login-email" name="email" autoComplete="username" type="email" className="input" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
             </div>
             <div>
-              <label className="label">Mật khẩu</label>
-              <input type="password" className="input" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+              <label className="label" htmlFor="login-password">Mật khẩu</label>
+              <input id="login-password" name="password" autoComplete="current-password" type="password" className="input" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
             </div>
+            {error && <p className="text-sm font-semibold text-red-700" role="alert">{error}</p>}
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? <Spinner size={17} className="text-white" /> : <LogIn size={17} />} Đăng nhập
             </button>
