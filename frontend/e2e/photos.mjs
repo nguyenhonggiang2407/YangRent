@@ -99,3 +99,29 @@ test('missing listing photos retain an explicit empty state instead of borrowing
     assert.ok(decoded.src.endsWith('/images/yangrent-placeholder.svg'))
   } finally { await context.close() }
 })
+
+test('home search sends the selected room type and monthly budget from a narrow screen', async () => {
+  const { context, page } = await pageFor({ width: 320, height: 800 })
+  try {
+    await page.goto(base)
+    const search = page.getByRole('form', { name: 'Tìm chỗ ở' })
+    await expect(search.getByText('Khu vực hoặc từ khóa', { exact: true })).toBeVisible()
+    await expect(search.getByText('Loại chỗ ở', { exact: true })).toBeVisible()
+    await expect(search.getByText('Giá mỗi tháng', { exact: true })).toBeVisible()
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Search form must fit at 320px')
+
+    await search.getByRole('searchbox', { name: 'Khu vực hoặc từ khóa' }).fill('  Cầu Giấy  ')
+    await search.getByRole('combobox', { name: 'Loại chỗ ở' }).selectOption('STUDIO')
+    await search.getByRole('combobox', { name: 'Giá mỗi tháng' }).selectOption('3000000-5000000')
+    const request = page.waitForRequest((req) => {
+      const url = new URL(req.url())
+      return url.pathname === '/api/rooms' && url.searchParams.get('room_type') === 'STUDIO'
+    })
+    await search.getByRole('button', { name: 'Tìm chỗ ở', exact: true }).press('Enter')
+    await expect(page).toHaveURL(/\/rooms\?/)
+    const query = new URL((await request).url()).searchParams
+    assert.equal(query.get('keyword'), 'Cầu Giấy')
+    assert.equal(query.get('price_min'), '3000000')
+    assert.equal(query.get('price_max'), '5000000')
+  } finally { await context.close() }
+})

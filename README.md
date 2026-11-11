@@ -3,7 +3,7 @@
 Website tìm phòng và quản lý cho thuê, với giao diện React/Vite và backend FastAPI,
 SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê và người dùng thông thường.
 
-![Trang chủ YangRent trên máy tính, chạy từ bản build với dữ liệu kiểm thử hư cấu](docs/screenshots/home-photos-desktop.webp)
+![Trang chủ YangRent với bộ lọc thuê và ảnh studio minh họa](docs/screenshots/home-discovery-desktop.jpg)
 
 **Stack:** React 18 · JavaScript · Vite · FastAPI · SQLAlchemy · PostgreSQL (triển khai) / SQLite (demo local).
 
@@ -154,16 +154,14 @@ browser fixture và truy cập dịch vụ public.
 
 ## Ảnh chụp
 
-Banner và sáu nhóm chỗ ở dùng ảnh chụp khôi phục từ bộ ảnh cũ của YangRent, với bản WebP cho điện thoại và máy tính. Trang `/photo-credits` ghi tác giả và bản ảnh đã lưu. Ảnh chỉ minh họa loại không gian; tin đăng dùng ảnh của người đăng. Xem [nguồn ảnh và phạm vi sử dụng](docs/photo-sources.md).
+Trang chủ đặt ảnh studio cạnh bộ lọc trên máy tính và ngay dưới bộ lọc trên điện thoại. Ảnh studio và sáu nhóm chỗ ở dùng các bản WebP khôi phục từ bộ ảnh cũ của YangRent. Trang `/photo-credits` ghi tác giả và bản ảnh đã lưu. Tin đăng hiển thị ảnh do người đăng cung cấp. Xem [nguồn ảnh và phạm vi sử dụng](docs/photo-sources.md).
 
-Ảnh desktop ở đầu README và ảnh mobile dưới đây được chụp từ bản build đã qua
-[CI và kiểm tra trình duyệt](https://github.com/nguyenhonggiang2407/YangRent/actions/runs/41661305056),
-dùng API fixture hư cấu để kiểm tra giao diện; chúng không chứng minh dữ liệu hoặc
-backend của bản triển khai đang hoạt động.
+Ảnh desktop và mobile được chụp từ bản build cục bộ trong Chromium với API fixture hư cấu.
+[GitHub Actions](https://github.com/nguyenhonggiang2407/YangRent/actions/workflows/ci.yml) chạy lại các ca kiểm thử ảnh, nguồn ảnh và bộ lọc tìm kiếm.
 
 <details><summary>Xem giao diện điện thoại</summary>
 
-![Giao diện điện thoại với ảnh chụp](docs/screenshots/home-photos-mobile.webp)
+![Giao diện điện thoại với bộ lọc thuê và ảnh studio](docs/screenshots/home-discovery-mobile.jpg)
 
 </details>
 
