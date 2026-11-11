@@ -11,3 +11,20 @@ Only `Dockerfile.demo` opts into this behavior. The existing API-only configurat
 Deploy the repository root with runtime `docker`, Dockerfile `./Dockerfile.demo`, one instance on plan `free`, and no disk or database resource. Do not attach an environment group or copy credentials from another service. Render injects `PORT`; the demo binds to `0.0.0.0` using one worker.
 
 Public demo: **https://yangrent-portfolio-demo.onrender.com/**. Deployment and actual HTTPS functionality were verified on 4 November 2026 before adding the link to README and portfolio metadata. See [hosting verification](hosting-status.md).
+
+## Optional shared login for a local walkthrough
+
+From a fresh process in `backend`, set `PORTFOLIO_DEMO=true` and
+`DEMO_LOGIN_ENABLED=1`. Supply `DEMO_LOGIN_EMAIL` and
+`DEMO_LOGIN_PASSWORD` through your local environment or secret manager. Leave
+`DATABASE_URL` unset in both the environment and `.env`. Run
+`python -m app.portfolio_demo` and open `http://127.0.0.1:10000`, or use the port
+set in `PORT`. Build the frontend and point `FRONTEND_DIST_DIR` at its output to
+use the full interface at that address.
+
+The launcher binds to loopback in this mode. It creates one `USER` with a
+bcrypt password hash and one fictional favorite. Visitors can browse and use
+the regular renter flows. The shared account's profile and password edits are
+disabled, and the local login endpoint allows 12 submissions per minute. The
+launcher creates a fresh disposable database on each run. Restart it to reset
+all sample data. Keep this option disabled on public hosting.

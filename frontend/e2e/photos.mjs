@@ -54,6 +54,29 @@ async function pageFor(viewport, broken = false) {
   return { context, page }
 }
 
+test('saved rooms waits for session restoration when opened directly', async () => {
+  const { context, page } = await pageFor({ width: 390, height: 844 })
+  let releaseSession
+  const sessionReady = new Promise((resolve) => { releaseSession = resolve })
+  try {
+    await page.addInitScript(() => localStorage.setItem('yangrent_token', 'browser-test-token'))
+    await page.route('**/api/auth/me', async (route) => {
+      await sessionReady
+      await route.fulfill({ json: { success: true, data: { full_name: 'Fictional user', roles: ['USER'] } } })
+    })
+    await page.route('**/api/rooms/favorites/me', (route) =>
+      route.fulfill({ json: { success: true, data: fixtures().slice(0, 1) } }))
+    await page.goto(base + '/favorites')
+    await expect(page.getByRole('heading', { name: 'Phòng đã lưu' })).toBeVisible()
+    releaseSession()
+    await expect(page.getByText(fixtures()[0].title, { exact: true })).toBeVisible()
+    await expect(page).toHaveURL(base + '/favorites')
+  } finally {
+    releaseSession()
+    await context.close()
+  }
+})
+
 for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
   test(`${name}: bundled photographs decode, fit the layout and link to their credits`, async () => {
     const { context, page } = await pageFor(viewport)

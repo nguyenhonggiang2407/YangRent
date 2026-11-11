@@ -4,7 +4,7 @@ Luồng bảo mật backend: Authentication -> Role -> Ownership -> Permission -
 """
 from typing import Optional
 
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import ForbiddenError, UnauthorizedError
@@ -61,3 +61,9 @@ require_admin = require_roles(ROLE_ADMIN)
 require_landlord = require_roles(ROLE_ADMIN, ROLE_LANDLORD)
 require_tenant = require_roles(ROLE_ADMIN, ROLE_TENANT)
 require_auth = require_roles(*ALL_ROLES)
+
+
+def require_editable_account(request: Request, user: User = Depends(require_auth)) -> User:
+    if getattr(request.app.state, "shared_demo_user_id", None) == user.id:
+        raise ForbiddenError("Tài khoản dùng thử có hồ sơ và mật khẩu cố định.")
+    return user

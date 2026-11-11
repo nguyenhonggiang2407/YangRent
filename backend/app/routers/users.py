@@ -9,7 +9,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
-from app.core.deps import require_auth
+from app.core.deps import require_editable_account
 from app.core.exceptions import AppError, NotFoundError
 from app.database import get_db
 from app.models.user import User
@@ -29,7 +29,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 # ---------- Avatar ----------
 @router.put("/me/avatar")
-def update_avatar(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+def update_avatar(request: Request, user: User = Depends(require_editable_account), db: Session = Depends(get_db)):
     """Cap nhat anh dai dien. Gui JSON {"avatar_url": "https://..."} hoac {"data_url": "data:image/...;base64,..."}."""
     import json
     import asyncio
@@ -52,7 +52,7 @@ def update_avatar(request: Request, user: User = Depends(require_auth), db: Sess
 
 
 @router.delete("/me/avatar")
-def delete_avatar(user: User = Depends(require_auth), db: Session = Depends(get_db)):
+def delete_avatar(user: User = Depends(require_editable_account), db: Session = Depends(get_db)):
     user.avatar_url = ""
     db.commit()
     return ok(user_public(user), "Da xoa avatar")
@@ -60,7 +60,7 @@ def delete_avatar(user: User = Depends(require_auth), db: Session = Depends(get_
 
 # ---------- Profile ----------
 @router.put("/me")
-def update_profile(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+def update_profile(request: Request, user: User = Depends(require_editable_account), db: Session = Depends(get_db)):
     import json
     import asyncio
     body = asyncio.get_event_loop().run_until_complete(request.body())

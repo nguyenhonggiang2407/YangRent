@@ -2,9 +2,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.deps import require_auth
-from app.core.exceptions import UnauthorizedError
-from app.core.security import hash_password
+from app.core.deps import require_auth, require_editable_account
 from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import ChangePasswordRequest, LoginRequest, RegisterRequest, UserUpdateRequest
@@ -32,12 +30,12 @@ def me(user: User = Depends(require_auth)):
 
 
 @router.put("/me")
-def update_me(data: UserUpdateRequest, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+def update_me(data: UserUpdateRequest, user: User = Depends(require_editable_account), db: Session = Depends(get_db)):
     user = auth_service.update_profile(db, user, data)
     return ok(user.to_public_dict(), "Cập nhật hồ sơ thành công")
 
 
 @router.put("/change-password")
-def change_password(data: ChangePasswordRequest, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+def change_password(data: ChangePasswordRequest, user: User = Depends(require_editable_account), db: Session = Depends(get_db)):
     auth_service.change_password(db, user, data.old_password, data.new_password)
     return ok(message="Đổi mật khẩu thành công")

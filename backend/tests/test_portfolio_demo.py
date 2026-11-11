@@ -13,7 +13,8 @@ BACKEND = Path(__file__).resolve().parents[1]
 
 class PortfolioDemo(unittest.TestCase):
     def environment(self, directory, **overrides):
-        ignored = {"DATABASE_URL", "PORTFOLIO_DEMO", "FRONTEND_DIST_DIR", "SECRET_KEY", "JWT_SECRET"}
+        ignored = {"DATABASE_URL", "PORTFOLIO_DEMO", "FRONTEND_DIST_DIR", "SECRET_KEY", "JWT_SECRET",
+                   "DEMO_LOGIN_ENABLED", "DEMO_LOGIN_EMAIL", "DEMO_LOGIN_PASSWORD"}
         result = {key: value for key, value in os.environ.items() if key.upper() not in ignored}
         result.update({"PYTHONPATH": str(BACKEND), "PYTHONUTF8": "1", "PYTHONDONTWRITEBYTECODE": "1",
                        "TEMP": directory, "TMP": directory, "PORTFOLIO_DEMO": "true"})
@@ -151,6 +152,63 @@ with patch('uvicorn.run') as run:
             result = self.run_code(code, directory, PORT="9091")
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout, "")
+
+    def test_shared_account_is_opt_in_loopback_and_restricted(self):
+        code = '''
+import os
+from unittest.mock import patch
+from fastapi.testclient import TestClient
+from app import portfolio_demo
+with patch('uvicorn.run') as run:
+    portfolio_demo.main()
+    assert run.call_args.kwargs['host'] == '127.0.0.1'
+    app = run.call_args.args[0]
+from app.database import SessionLocal
+from app.models import User
+from app.core.security import verify_password
+email = os.environ['DEMO_LOGIN_EMAIL'].lower()
+password = os.environ['DEMO_LOGIN_PASSWORD']
+with SessionLocal() as db:
+    user = db.query(User).filter_by(email=email).one()
+    assert user.role_names() == ['USER']
+    assert user.hashed_password != password and verify_password(password, user.hashed_password)
+with TestClient(app) as client:
+    assert client.get('/api/auth/me').status_code == 401
+    path = '/api/auth/login'
+    assert client.post(path, json={'email': email, 'password': 'incorrect'}).status_code == 401
+    reply = client.post(path, json={'email': email, 'password': password})
+    assert reply.status_code == 200
+    assert password not in reply.text
+    headers = {'Authorization': 'Bearer ' + reply.json()['data']['access_token']}
+    assert client.get('/api/auth/me', headers=headers).json()['data']['roles'] == ['USER']
+    assert len(client.get('/api/rooms/favorites/me', headers=headers).json()['data']) == 1
+    assert client.get('/api/admin/overview', headers=headers).status_code == 403
+    for target in ('/api/auth/me', '/api/users/me', '/api/users/me/avatar', '/api/auth/change-password'):
+        assert client.put(target, headers=headers, json={
+            'full_name': 'different', 'old_password': password, 'new_password': 'other-demo-secret'
+        }).status_code == 403
+    for _ in range(10):
+        assert client.post(path, json={'email': 'nobody@example.com', 'password': 'incorrect'}).status_code == 401
+    assert client.post(path, json={'email': email, 'password': password}).status_code == 429
+'''
+        with tempfile.TemporaryDirectory() as directory:
+            result = self.run_code(
+                code, directory, DEMO_LOGIN_ENABLED="1",
+                DEMO_LOGIN_EMAIL="viewer@example.com", DEMO_LOGIN_PASSWORD="fixture-portfolio-password",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn("fixture-portfolio-password", result.stdout + result.stderr)
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_enabled_shared_login_without_credentials_fails_without_leaking_input(self):
+        with tempfile.TemporaryDirectory() as directory:
+            result = self.run_code(
+                "from app.portfolio_demo import main; main()", directory,
+                DEMO_LOGIN_ENABLED="1", DEMO_LOGIN_PASSWORD="not-for-output",
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn("not-for-output", result.stdout + result.stderr)
+            self.assertEqual(list(Path(directory).iterdir()), [])
 
 
 if __name__ == "__main__":
