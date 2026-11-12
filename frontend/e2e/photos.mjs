@@ -125,3 +125,76 @@ test('home search sends the selected room type and monthly budget from a narrow 
     assert.equal(query.get('price_max'), '5000000')
   } finally { await context.close() }
 })
+
+async function resultsFixture(page) {
+  await page.route('**/api/rooms?*', (route) => {
+    const query = new URL(route.request().url()).searchParams
+    const selectedType = query.get('room_type')
+    const items = fixtures().map((room) => ({
+      ...room,
+      room_type: selectedType || room.room_type,
+      district: query.get('district') || room.district,
+      title: room.title + (query.get('page') === '2' ? ' · trang 2' : ''),
+    }))
+    return route.fulfill({ json: { success: true, data: { items, total: selectedType ? items.length : 24, total_pages: selectedType ? 1 : 2 } } })
+  })
+}
+
+test('listing pagination requests page two without clearing the selected district', async () => {
+  const { context, page } = await pageFor({ width: 390, height: 844 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y')
+    await page.getByRole('button', { name: '2', exact: true }).click()
+    await expect(page).toHaveURL(/[?&]page=2(?:&|$)/, { timeout: 2500 })
+    await expect(page.getByRole('heading', { name: /chỗ ở minh họa 1.*trang 2/i })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Phân trang' }).getByRole('button', { name: '2', exact: true })).toHaveAttribute('aria-current', 'page')
+    assert.equal(new URL(page.url()).searchParams.get('district'), 'Cầu Giấy')
+  } finally { await context.close() }
+})
+
+test('mobile listing puts results in view and keeps the active filters editable', async () => {
+  const { context, page } = await pageFor({ width: 390, height: 844 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y&room_type=STUDIO')
+    const filterToggle = page.getByRole('button', { name: 'Bộ lọc (2)', exact: true })
+    const panel = page.getByRole('complementary', { name: 'Bộ lọc' })
+    await expect(filterToggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(panel).toBeHidden()
+    const firstResult = page.getByRole('heading', { name: /chỗ ở minh họa 1/i })
+    await expect(firstResult).toBeVisible()
+    const cardImage = page.getByRole('img', { name: /chỗ ở minh họa 1/i }).first()
+    await expect(cardImage).toBeInViewport({ ratio: 0.5 })
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1))
+    await cardImage.evaluate((element) => element.decode())
+    await expect(cardImage).toHaveCSS('opacity', '1')
+    await page.screenshot({ path: '../docs/screenshots/search-results-mobile.jpg', quality: 88, animations: 'disabled' })
+    await filterToggle.click()
+    await expect(panel.getByLabel('Quận, huyện')).toHaveValue('Cầu Giấy')
+    await panel.getByLabel('Wi-Fi').check()
+    await panel.getByRole('button', { name: 'Xem kết quả' }).click()
+    await expect(page.getByRole('button', { name: 'Bộ lọc (3)', exact: true })).toBeFocused()
+    const chips = page.getByRole('group', { name: 'Bộ lọc đang dùng' })
+    await chips.getByRole('button', { name: 'Bỏ lọc Cầu Giấy' }).click()
+    await expect(page).not.toHaveURL(/district=/)
+    await expect(chips.getByRole('button', { name: 'Bỏ lọc Wi-Fi' })).toBeVisible()
+  } finally { await context.close() }
+})
+
+test('desktop listing shows the labeled filter panel alongside results', async () => {
+  const { context, page } = await pageFor({ width: 1440, height: 900 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y&room_type=STUDIO')
+    await expect(page.getByRole('complementary', { name: 'Bộ lọc' }).getByLabel('Loại chỗ ở')).toHaveValue('STUDIO')
+    await expect(page.getByRole('group', { name: 'Bộ lọc đang dùng' }).getByRole('button', { name: 'Bỏ lọc Cầu Giấy' })).toBeVisible()
+    const result = page.getByRole('region', { name: 'Kết quả tìm chỗ ở' })
+    await expect(result.getByRole('heading', { name: /chỗ ở minh họa 1/i })).toBeInViewport()
+    for (const image of await result.locator('img').all()) {
+      await image.evaluate((element) => element.decode())
+      await expect(image).toHaveCSS('opacity', '1')
+    }
+    await page.screenshot({ path: '../docs/screenshots/search-results-desktop.jpg', quality: 88, animations: 'disabled' })
+  } finally { await context.close() }
+})

@@ -125,7 +125,7 @@ export function Modal({ open, onClose, title, children, width = 'max-w-lg' }) {
 export function Pagination({ page, totalPages, onChange }) {
   if (totalPages <= 1) return null
   return (
-    <div className="flex items-center justify-center gap-1.5 pt-6">
+    <nav aria-label="Phân trang" className="flex flex-wrap items-center justify-center gap-1.5 pt-6">
       <button
         className="btn-secondary !px-2.5 !py-2"
         disabled={page <= 1}
@@ -138,6 +138,7 @@ export function Pagination({ page, totalPages, onChange }) {
         className="btn-secondary !px-3 !py-2"
         disabled={page <= 1}
         onClick={() => onChange(page - 1)}
+        aria-label="Trang trước"
       >
         <ChevronLeft size={16} />
       </button>
@@ -148,6 +149,7 @@ export function Pagination({ page, totalPages, onChange }) {
             {idx > 0 && arr[idx - 1] !== p - 1 && <span className="px-1 text-ink-400">…</span>}
             <button
               onClick={() => onChange(p)}
+              aria-current={p === page ? 'page' : undefined}
               className={`h-9 min-w-9 rounded-xl px-3 text-sm font-semibold transition ${
                 p === page ? 'bg-brand-600 text-white' : 'bg-white text-ink-600 hover:bg-ink-100'
               }`}
@@ -160,6 +162,7 @@ export function Pagination({ page, totalPages, onChange }) {
         className="btn-secondary !px-3 !py-2"
         disabled={page >= totalPages}
         onClick={() => onChange(page + 1)}
+        aria-label="Trang sau"
       >
         <ChevronRight size={16} />
       </button>
@@ -171,7 +174,7 @@ export function Pagination({ page, totalPages, onChange }) {
       >
         <ChevronRight size={14} /><ChevronRight size={14} className="-ml-2" />
       </button>
-    </div>
+    </nav>
   )
 }
 

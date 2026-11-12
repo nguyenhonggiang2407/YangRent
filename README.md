@@ -5,6 +5,8 @@ SQLAlchemy. Có các vai trò quản trị viên, chủ trọ, người thuê v�
 
 ![Trang chủ YangRent với bộ lọc thuê và ảnh studio minh họa](docs/screenshots/home-discovery-desktop.jpg)
 
+[Kết quả tìm chỗ ở trên desktop](docs/screenshots/search-results-desktop.jpg) · [Trên điện thoại](docs/screenshots/search-results-mobile.jpg)
+
 **Stack:** React 18 · JavaScript · Vite · FastAPI · SQLAlchemy · PostgreSQL (triển khai) / SQLite (demo local).
 
 **[Mở Live Demo ↗](https://yangrent-portfolio-demo.onrender.com/)** · [CI](https://github.com/nguyenhonggiang2407/YangRent/actions/workflows/ci.yml) · [Kết quả triển khai](docs/hosting-status.md) · [Cấu hình demo riêng](docs/free-demo.md)

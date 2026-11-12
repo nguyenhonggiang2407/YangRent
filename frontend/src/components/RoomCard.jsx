@@ -41,8 +41,9 @@ export default function RoomCard({ room }) {
         <p className="text-xs font-bold uppercase tracking-wide text-brand-600">{ROOM_TYPE_LABEL[room.room_type] || 'Chỗ ở cho thuê'}</p>
         <h3 className="mt-1 line-clamp-2 min-h-[2.6rem] text-[15px] font-bold leading-snug text-ink-900 group-hover:text-brand-700">{room.title}</h3>
         <p className="mt-1.5 flex items-center gap-1 text-xs text-ink-500"><MapPin size={13} className="shrink-0" /><span className="truncate">{room.ward ? `${room.ward}, ` : ''}{room.district}, {room.city}</span></p>
-        <div className="mt-3 flex items-end justify-between border-t border-ink-100 pt-3">
-          <p className="text-lg font-extrabold text-brand-700">{vnd(room.price)}</p><p className="pb-0.5 text-xs text-ink-400">/ tháng</p>
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-1.5 border-t border-ink-100 pt-3">
+          <p className="text-lg font-extrabold text-brand-700">{vnd(room.price)}</p>
+          <p className="text-xs text-ink-600">/ tháng</p>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-500">
           <span className="flex items-center gap-1"><Ruler size={13} /> {room.area} m²</span>
