@@ -99,3 +99,102 @@ test('missing listing photos retain an explicit empty state instead of borrowing
     assert.ok(decoded.src.endsWith('/images/yangrent-placeholder.svg'))
   } finally { await context.close() }
 })
+
+test('home search sends the selected room type and monthly budget from a narrow screen', async () => {
+  const { context, page } = await pageFor({ width: 320, height: 800 })
+  try {
+    await page.goto(base)
+    const search = page.getByRole('form', { name: 'Tìm chỗ ở' })
+    await expect(search.getByText('Khu vực hoặc từ khóa', { exact: true })).toBeVisible()
+    await expect(search.getByText('Loại chỗ ở', { exact: true })).toBeVisible()
+    await expect(search.getByText('Giá mỗi tháng', { exact: true })).toBeVisible()
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Search form must fit at 320px')
+
+    await search.getByRole('searchbox', { name: 'Khu vực hoặc từ khóa' }).fill('  Cầu Giấy  ')
+    await search.getByRole('combobox', { name: 'Loại chỗ ở' }).selectOption('STUDIO')
+    await search.getByRole('combobox', { name: 'Giá mỗi tháng' }).selectOption('3000000-5000000')
+    const request = page.waitForRequest((req) => {
+      const url = new URL(req.url())
+      return url.pathname === '/api/rooms' && url.searchParams.get('room_type') === 'STUDIO'
+    })
+    await search.getByRole('button', { name: 'Tìm chỗ ở', exact: true }).press('Enter')
+    await expect(page).toHaveURL(/\/rooms\?/)
+    const query = new URL((await request).url()).searchParams
+    assert.equal(query.get('keyword'), 'Cầu Giấy')
+    assert.equal(query.get('price_min'), '3000000')
+    assert.equal(query.get('price_max'), '5000000')
+  } finally { await context.close() }
+})
+
+async function resultsFixture(page) {
+  await page.route('**/api/rooms?*', (route) => {
+    const query = new URL(route.request().url()).searchParams
+    const selectedType = query.get('room_type')
+    const items = fixtures().map((room) => ({
+      ...room,
+      room_type: selectedType || room.room_type,
+      district: query.get('district') || room.district,
+      title: room.title + (query.get('page') === '2' ? ' · trang 2' : ''),
+    }))
+    return route.fulfill({ json: { success: true, data: { items, total: selectedType ? items.length : 24, total_pages: selectedType ? 1 : 2 } } })
+  })
+}
+
+test('listing pagination requests page two without clearing the selected district', async () => {
+  const { context, page } = await pageFor({ width: 390, height: 844 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y')
+    await page.getByRole('button', { name: '2', exact: true }).click()
+    await expect(page).toHaveURL(/[?&]page=2(?:&|$)/, { timeout: 2500 })
+    await expect(page.getByRole('heading', { name: /chỗ ở minh họa 1.*trang 2/i })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Phân trang' }).getByRole('button', { name: '2', exact: true })).toHaveAttribute('aria-current', 'page')
+    assert.equal(new URL(page.url()).searchParams.get('district'), 'Cầu Giấy')
+  } finally { await context.close() }
+})
+
+test('mobile listing puts results in view and keeps the active filters editable', async () => {
+  const { context, page } = await pageFor({ width: 390, height: 844 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y&room_type=STUDIO')
+    const filterToggle = page.getByRole('button', { name: 'Bộ lọc (2)', exact: true })
+    const panel = page.getByRole('complementary', { name: 'Bộ lọc' })
+    await expect(filterToggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(panel).toBeHidden()
+    const firstResult = page.getByRole('heading', { name: /chỗ ở minh họa 1/i })
+    await expect(firstResult).toBeVisible()
+    const cardImage = page.getByRole('img', { name: /chỗ ở minh họa 1/i }).first()
+    await expect(cardImage).toBeInViewport({ ratio: 0.5 })
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1))
+    await cardImage.evaluate((element) => element.decode())
+    await expect(cardImage).toHaveCSS('opacity', '1')
+    await page.screenshot({ path: '../docs/screenshots/search-results-mobile.jpg', quality: 88, animations: 'disabled' })
+    await filterToggle.click()
+    await expect(panel.getByLabel('Quận, huyện')).toHaveValue('Cầu Giấy')
+    await panel.getByLabel('Wi-Fi').check()
+    await panel.getByRole('button', { name: 'Xem kết quả' }).click()
+    await expect(page.getByRole('button', { name: 'Bộ lọc (3)', exact: true })).toBeFocused()
+    const chips = page.getByRole('group', { name: 'Bộ lọc đang dùng' })
+    await chips.getByRole('button', { name: 'Bỏ lọc Cầu Giấy' }).click()
+    await expect(page).not.toHaveURL(/district=/)
+    await expect(chips.getByRole('button', { name: 'Bỏ lọc Wi-Fi' })).toBeVisible()
+  } finally { await context.close() }
+})
+
+test('desktop listing shows the labeled filter panel alongside results', async () => {
+  const { context, page } = await pageFor({ width: 1440, height: 900 })
+  try {
+    await resultsFixture(page)
+    await page.goto(base + '/rooms?district=C%E1%BA%A7u+Gi%E1%BA%A5y&room_type=STUDIO')
+    await expect(page.getByRole('complementary', { name: 'Bộ lọc' }).getByLabel('Loại chỗ ở')).toHaveValue('STUDIO')
+    await expect(page.getByRole('group', { name: 'Bộ lọc đang dùng' }).getByRole('button', { name: 'Bỏ lọc Cầu Giấy' })).toBeVisible()
+    const result = page.getByRole('region', { name: 'Kết quả tìm chỗ ở' })
+    await expect(result.getByRole('heading', { name: /chỗ ở minh họa 1/i })).toBeInViewport()
+    for (const image of await result.locator('img').all()) {
+      await image.evaluate((element) => element.decode())
+      await expect(image).toHaveCSS('opacity', '1')
+    }
+    await page.screenshot({ path: '../docs/screenshots/search-results-desktop.jpg', quality: 88, animations: 'disabled' })
+  } finally { await context.close() }
+})

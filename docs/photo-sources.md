@@ -20,7 +20,7 @@ Catalog máy đọc: [`housingPhotos.json`](../frontend/src/data/housingPhotos.j
 
 ## Cách hiển thị
 
-- Banner và nhóm chỗ ở có chú thích ảnh minh họa, liên kết đến `/photo-credits` và ghi tác giả. Không khẳng định những địa điểm trong ảnh thuộc Hà Nội hoặc đang được cho thuê.
+- Ảnh studio nằm cạnh biểu mẫu tìm kiếm trên máy tính và dưới biểu mẫu trên điện thoại. Chú thích phân biệt ảnh minh họa với tin đăng và dẫn đến `/photo-credits` để xem tác giả. Nhóm ảnh bên dưới giúp lọc theo loại chỗ ở.
 - Tin đăng vẫn dùng `room_images` của người đăng. Ảnh lỗi/chưa có giữ trạng thái rõ ràng, không thay bằng một phòng stock khác.
 - Chỉ database demo cục bộ mới dùng ba ảnh chụp minh họa. Seed vẫn yêu cầu `--local-demo`, tạo file mới và từ chối ghi đè; không cập nhật database đang chạy.
 - Ảnh được lưu cùng source để không phụ thuộc hotlink Pexels lúc người dùng mở trang. Hero có ưu tiên tải; ảnh danh mục dùng lazy loading và srcset.
